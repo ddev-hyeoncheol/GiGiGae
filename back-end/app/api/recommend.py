@@ -1,3 +1,5 @@
+"""브랜드/도메인 추천 API 엔드포인트"""
+
 from fastapi import APIRouter, Depends
 
 from app.core.database import get_pool

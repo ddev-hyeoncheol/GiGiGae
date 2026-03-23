@@ -1,3 +1,5 @@
+"""GiGiGae FastAPI 앱 진입점"""
+
 from contextlib import asynccontextmanager
 from typing import Any
 

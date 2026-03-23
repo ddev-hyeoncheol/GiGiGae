@@ -1,3 +1,5 @@
+"""전역 예외 클래스 및 핸들러"""
+
 from fastapi import Request
 from fastapi.responses import JSONResponse
 

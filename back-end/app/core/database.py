@@ -1,3 +1,5 @@
+"""asyncpg 커넥션 풀 관리"""
+
 import asyncpg
 
 from app.core.config import settings

@@ -1,3 +1,5 @@
+"""브랜드/도메인 추천 요청/응답 스키마"""
+
 from pydantic import BaseModel, Field
 
 from app.schemas.trademark import TrademarkSearchResponse

@@ -1,3 +1,5 @@
+"""상표 검색 요청/응답 스키마"""
+
 from pydantic import BaseModel, Field
 
 

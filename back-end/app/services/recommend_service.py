@@ -1,3 +1,5 @@
+"""브랜드/도메인 추천 비즈니스 로직"""
+
 from app.core.constants import BRAND_CANDIDATE_COUNT
 from app.plugins.ollama_plugin import OllamaPlugin
 from app.schemas.recommend import (

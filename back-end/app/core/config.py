@@ -1,3 +1,5 @@
+"""앱 설정 (pydantic-settings 기반 .env 로드)"""
+
 from pydantic_settings import BaseSettings
 
 

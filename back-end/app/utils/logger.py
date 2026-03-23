@@ -1,3 +1,5 @@
+"""공통 로거 설정"""
+
 import logging
 import sys
 
