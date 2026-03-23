@@ -115,7 +115,7 @@ CREATE INDEX IF NOT EXISTS idx_trademarks_name_trgm ON trademarks USING GIN (nam
 - `asyncpg` 커넥션 풀을 `core/database.py`에서 DI로 주입받음
 - pg_trgm `similarity()` 함수로 유사도 검색 (threshold 기본값 0.3)
 - 니스분류 필터, 법적상태 = '등록' 필터 적용
-- 위험도 판별: 최고 유사도 >= 0.7 → High, >= 0.4 → Middle, 그 외 → Low
+- 위험도 판별: 최고 유사도 >= 0.55 → High, >= 0.4 → Middle, 그 외 → Low
 
 ---
 

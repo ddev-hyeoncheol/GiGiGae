@@ -83,11 +83,11 @@ class TrademarkService:
 
     @staticmethod
     def _evaluate_risk(matches: list[TrademarkMatch]) -> str:
-        """최고 유사도 기준 위험도 판별 (High >= 0.7, Middle >= 0.4, Low)"""
+        """최고 유사도 기준 위험도 판별 (High >= 0.55, Middle >= 0.4, Low)"""
         if not matches:
             return "Low"
         top_score = matches[0].similarity
-        if top_score >= 0.7:
+        if top_score >= 0.55:
             return "High"
         elif top_score >= 0.4:
             return "Middle"
