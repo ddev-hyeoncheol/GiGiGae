@@ -34,11 +34,11 @@ class OllamaService(BaseLLMService):
                 format=schema.model_json_schema(),
                 think=False,
                 options={
-                    "temperature": 0.5,
+                    "temperature": 0.75,
                     "num_predict": 2048,
                     "num_ctx": 4096,
-                    "top_k": 30,
-                    "top_p": 0.85,
+                    "top_k": 50,
+                    "top_p": 0.9,
                 },
             )
             return schema.model_validate_json(response["message"]["content"])
