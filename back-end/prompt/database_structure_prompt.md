@@ -7,7 +7,7 @@
 
 ## 개요
 
-KIPRIS(한국특허정보원) 상표권 데이터를 PostgreSQL에 적재하고, 백엔드에서 상표 유사도 검색을 제공하기 위한 DB 구조를 설계한다.
+KIPRIS(한국특허정보원) 상표권 데이터를 PostgreSQL에 적재하고, 백엔드에서 pg_trgm 기반 상표 유사도 검색을 제공한다.
 
 ---
 
@@ -16,22 +16,22 @@ KIPRIS(한국특허정보원) 상표권 데이터를 PostgreSQL에 적재하고,
 ### 1단계: Docker Compose에 PostgreSQL 컨테이너 추가 `[구현 완료]`
 
 - `docker-compose.yml`에 `postgres:16-alpine` 서비스 추가
-- `container_name: db`, `hostname: db`
 - `./db/pgdata` 로컬 바인드 마운트로 데이터 영속화
 - `./db/init.sql`을 `/docker-entrypoint-initdb.d/init.sql`로 마운트 (최초 기동 시 자동 실행)
 - `back-end` 서비스에 `depends_on: db` 및 `DATABASE_URL` 환경변수 주입
-- `back-end/app/core/config.py`에 `database_url: str | None = None` 설정 추가
 
 ### 2단계: 테이블 스키마 + xlsx 적재 스크립트 `[구현 완료]`
 
-- `db/init.sql` 생성 (PostgreSQL 초기화 시 자동 실행)
+- `db/init.sql` 생성 (pg_trgm 확장 + 테이블 DDL + 인덱스)
 - `db/load_data.py` 생성 (xlsx → PostgreSQL 적재)
 - 21개 xlsx 파일, 총 101,789건 적재 완료
 
-### 3단계: 백엔드 상표 검색 API 통합 `[미구현]`
+### 3단계: 백엔드 상표 검색 API 통합 `[구현 완료]`
 
-- `app/services/trademark_service.py` 생성
-- `/recommend/brand` 엔드포인트에서 LLM 추천 후 DB 조회로 상표 충돌 판별
+- `app/core/database.py`에서 asyncpg 커넥션 풀 관리
+- `app/services/trademark_service.py`에서 pg_trgm 유사도 검색 + 위험도 판별 (Low / Middle / High)
+- `app/api/trademark.py`에서 `POST /api/v1/trademark/search` 엔드포인트 제공
+- `app/services/recommend_service.py`에서 LLM 추천 후 각 후보별 상표 검색 자동 수행
 
 ---
 
@@ -47,7 +47,7 @@ KIPRIS(한국특허정보원) 상표권 데이터를 PostgreSQL에 적재하고,
 
 ```
 db/
-├── init.sql          # 테이블 생성 DDL
+├── init.sql          # pg_trgm 확장 + 테이블 생성 DDL + 인덱스
 ├── load_data.py      # xlsx → PostgreSQL 적재 스크립트
 ├── requirements.txt  # 적재 스크립트 의존성 (psycopg)
 ├── data/             # KIPRIS xlsx 원본 데이터 (.gitignore)
@@ -61,29 +61,32 @@ db/
 ### 1. 테이블 스키마 (`db/init.sql`)
 
 ```sql
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
 CREATE SEQUENCE IF NOT EXISTS trademarks_id_seq;
 
 CREATE TABLE IF NOT EXISTS trademarks (
     id BIGINT PRIMARY KEY DEFAULT nextval('trademarks_id_seq'),
 
     -- 필수: 상표 유사도 검색 핵심
-    name VARCHAR(500) NOT NULL,         -- 상표명칭 (컬럼 B)
-    nice_class VARCHAR(200),            -- 상품분류/니스분류 (컬럼 C)
-    application_no VARCHAR(50) UNIQUE NOT NULL, -- 출원번호 (컬럼 D)
-    legal_status VARCHAR(50),           -- 법적상태 (컬럼 Q)
+    name VARCHAR(500) NOT NULL,
+    nice_class VARCHAR(200),
+    application_no VARCHAR(50) UNIQUE NOT NULL,
+    legal_status VARCHAR(50),
 
     -- 유용: 분석 품질 향상
-    application_date DATE,              -- 출원일자 (컬럼 E)
-    name_type VARCHAR(50),              -- 명칭구분 (컬럼 S) - 한글상표/영문상표/도형복합 등
-    review_status VARCHAR(50),          -- 심사진행상태 (컬럼 R)
-    registration_no VARCHAR(50),        -- 등록번호 (컬럼 G)
-    registration_date DATE              -- 등록일자 (컬럼 H)
+    application_date DATE,
+    name_type VARCHAR(50),
+    review_status VARCHAR(50),
+    registration_no VARCHAR(50),
+    registration_date DATE
 );
 
 CREATE INDEX IF NOT EXISTS idx_trademarks_name ON trademarks (name);
 CREATE INDEX IF NOT EXISTS idx_trademarks_nice_class ON trademarks (nice_class);
 CREATE INDEX IF NOT EXISTS idx_trademarks_legal_status ON trademarks (legal_status);
 CREATE INDEX IF NOT EXISTS idx_trademarks_name_type ON trademarks (name_type);
+CREATE INDEX IF NOT EXISTS idx_trademarks_name_trgm ON trademarks USING GIN (name gin_trgm_ops);
 ```
 
 ### 2. xlsx 컬럼 매핑
@@ -107,11 +110,12 @@ CREATE INDEX IF NOT EXISTS idx_trademarks_name_type ON trademarks (name_type);
 - `psycopg`로 PostgreSQL 배치 INSERT (BATCH_SIZE=1000)
 - 출원번호 기준 `ON CONFLICT DO NOTHING` 중복 방지
 
-### 4. 상표 검색 서비스 (`app/services/trademark_service.py`) `[미구현]`
+### 4. 상표 검색 서비스 (`app/services/trademark_service.py`)
 
-- `asyncpg` 또는 `SQLAlchemy[asyncio]`로 비동기 DB 접근
-- 브랜드명 유사도 검색: `LIKE`, `pg_trgm` trigram 확장 활용
-- 검색 결과를 `BrandCandidate`에 반영 (충돌 상표 정보)
+- `asyncpg` 커넥션 풀을 `core/database.py`에서 DI로 주입받음
+- pg_trgm `similarity()` 함수로 유사도 검색 (threshold 기본값 0.3)
+- 니스분류 필터, 법적상태 = '등록' 필터 적용
+- 위험도 판별: 최고 유사도 >= 0.7 → High, >= 0.4 → Middle, 그 외 → Low
 
 ---
 
@@ -120,20 +124,14 @@ CREATE INDEX IF NOT EXISTS idx_trademarks_name_type ON trademarks (name_type);
 ```yaml
 services:
   db:
-    container_name: db
-    hostname: db
     image: postgres:16-alpine
-    environment:
-      POSTGRES_DB: gigigae
-      POSTGRES_USER: gigigae
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-    ports:
-      - "5432:5432"
     volumes:
       - ./db/pgdata:/var/lib/postgresql/data
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
 
   back-end:
+    volumes:
+      - ./back-end:/app
     environment:
       - DATABASE_URL=postgresql+asyncpg://gigigae:${DB_PASSWORD}@db:5432/gigigae
     depends_on:
@@ -145,13 +143,15 @@ services:
 ## 실행 방법
 
 ```bash
-# DB 컨테이너 시작 (최초 기동 시 init.sql 자동 실행)
-docker compose up db -d
+# 전체 실행 (DB + 백엔드)
+docker compose up -d
 
-# 데이터 적재 (최초 1회만 실행, pgdata 로컬 마운트로 영속화)
+# 데이터 적재 (최초 1회만, pgdata 로컬 마운트로 영속화)
 cd db
 python load_data.py
 
-# 백엔드 시작
-docker compose up back-end -d
+# 상표 검색 테스트
+curl -X POST http://localhost:9000/api/v1/trademark/search \
+  -H "Content-Type: application/json" \
+  -d '{"brand_name": "커피빈", "nice_classes": ["43"]}'
 ```

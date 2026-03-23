@@ -26,12 +26,13 @@
 
 ## Technical Requirements (Detailed)
 
-### 1. Back-end (FastAPI, Python 3.10+) :
+### 1. Back-end (FastAPI, Python 3.12+) :
 
 - **Data Validation** : 모든 입출력은 Pydantic Structured JSON 규격을 엄격히 준수한다.
-- **LLM** : Ollama(gemma3:12b or qwen3:8b)를 사용하고, 추후 다른 API 연동을 위한 `BaseLLMService` 추상화 계층(Service Layer) 를 설계한다.
-- **Diffusion** : `BaseImageService` 를 생성하고, 샘플 경로를 반환하는 `MockImageService` 를 기본값으로 한다.
-- **External API** : 공공 API, NHN Cloud API 연동과 관련된 부분을 작성하되, `.env` 에 키가 없을 경우 Mock 데이터를 반환한다.
+- **LLM** : Ollama(gemma3:12b or qwen3:8b)를 `plugins/ollama_plugin.py`로 관리한다.
+- **상표 검색** : PostgreSQL + pg_trgm 기반 유사도 검색을 `services/trademark_service.py`로 관리한다.
+- **비즈니스 로직** : LLM 추천 + 상표 검색을 조합하는 `services/recommend_service.py`에서 처리한다.
+- **DB 커넥션** : `core/database.py`에서 asyncpg 커넥션 풀을 관리하고, 서비스에 DI로 주입한다.
 
 ## Commit Message
 
