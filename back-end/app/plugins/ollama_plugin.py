@@ -6,13 +6,14 @@ from pydantic import BaseModel
 
 from app.core.config import settings
 from app.core.exceptions import LLMGenerationError, LLMTimeoutError
-from app.services.base_llm import BaseLLMService
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
 
-class OllamaService(BaseLLMService):
+class OllamaPlugin:
+    """Ollama LLM API 클라이언트"""
+
     def __init__(self, model: str | None = None, base_url: str | None = None):
         self.model = model or settings.ollama_model
         self.client = ollama.AsyncClient(
