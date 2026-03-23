@@ -3,7 +3,13 @@ from fastapi.responses import JSONResponse
 
 
 class AppException(Exception):
-    def __init__(self, error_code: str, message: str, status_code: int = 400, detail: str | None = None):
+    def __init__(
+        self,
+        error_code: str,
+        message: str,
+        status_code: int = 400,
+        detail: str | None = None,
+    ):
         super().__init__(message)
         self.error_code = error_code
         self.message = message
@@ -32,21 +38,15 @@ class LLMGenerationError(AppException):
 
 
 class ExternalAPIError(AppException):
-    def __init__(self, service_name: str, detail: str | None = None):
+    def __init__(
+        self,
+        message: str = "외부 서비스 호출 중 오류가 발생했습니다.",
+        detail: str | None = None,
+    ):
         super().__init__(
             error_code="EXTERNAL_API_ERROR",
-            message=f"외부 API({service_name}) 호출 중 오류가 발생했습니다.",
+            message=message,
             status_code=502,
-            detail=detail,
-        )
-
-
-class AppValidationError(AppException):
-    def __init__(self, detail: str | None = None):
-        super().__init__(
-            error_code="VALIDATION_ERROR",
-            message="입력 데이터가 유효하지 않습니다.",
-            status_code=422,
             detail=detail,
         )
 
