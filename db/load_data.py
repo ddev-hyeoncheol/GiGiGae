@@ -18,15 +18,17 @@ SCRIPT_DIR = Path(__file__).parent
 CREATE_TABLE_SQL = SCRIPT_DIR / "init.sql"
 
 COLUMN_MAP = {
+    # 필수: 상표 유사도 검색 핵심
     "B": "name",
     "C": "nice_class",
     "D": "application_no",
+    "Q": "legal_status",
+    # 유용: 분석 품질 향상
     "E": "application_date",
+    "S": "name_type",
+    "R": "review_status",
     "G": "registration_no",
     "H": "registration_date",
-    "P": "legal_status",
-    "S": "trademark_type",
-    "Y": "english_name",
 }
 
 NS = "http://schemas.openxmlformats.org/spreadsheetml/2006/main"
@@ -35,11 +37,11 @@ HEADER_SKIP_ROWS = 8
 BATCH_SIZE = 1000
 
 INSERT_SQL = """
-    INSERT INTO trademarks (name, nice_class, application_no, application_date,
-        registration_no, registration_date, legal_status, trademark_type, english_name)
-    VALUES (%(name)s, %(nice_class)s, %(application_no)s, %(application_date)s,
-        %(registration_no)s, %(registration_date)s, %(legal_status)s,
-        %(trademark_type)s, %(english_name)s)
+    INSERT INTO trademarks (name, nice_class, application_no, legal_status,
+        application_date, name_type, review_status, registration_no, registration_date)
+    VALUES (%(name)s, %(nice_class)s, %(application_no)s, %(legal_status)s,
+        %(application_date)s, %(name_type)s, %(review_status)s,
+        %(registration_no)s, %(registration_date)s)
     ON CONFLICT (application_no) DO NOTHING
 """
 
