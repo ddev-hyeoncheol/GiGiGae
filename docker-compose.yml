@@ -12,6 +12,8 @@ services:
     environment:
       - OLLAMA_BASE_URL=http://host.docker.internal:11434
       - DATABASE_URL=postgresql+asyncpg://gigigae:${DB_PASSWORD}@db:5432/gigigae
+    volumes:
+      - ./back-end:/app
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:

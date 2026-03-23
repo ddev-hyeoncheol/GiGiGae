@@ -4,12 +4,12 @@ from typing import Any
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.v1.router import v1_router
+from app.api.router import api_router
 from app.core.config import settings
 from app.core.constants import API_V1_PREFIX
+from app.core.database import close_pool, get_pool, init_pool
 from app.core.exceptions import AppException, app_exception_handler
-from app.services.mock_image import MockImageService
-from app.services.ollama_service import OllamaService
+from app.plugins.ollama_plugin import OllamaPlugin
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -19,20 +19,21 @@ app_state: dict[str, Any] = {}
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """앱 시작/종료 시 서비스 초기화 및 정리"""
-    logger.info("Initializing services...")
+    """앱 시작/종료 시 플러그인 초기화 및 정리"""
+    logger.info("Initializing plugins...")
 
-    app_state["llm_service"] = OllamaService()
-    app_state["image_service"] = MockImageService()
+    app_state["llm"] = OllamaPlugin()
 
-    logger.info(f"LLM: OllamaService (model={settings.ollama_model})")
-    logger.info("Image: MockImageService")
-    logger.info(f"Domain mock mode: {settings.use_mock_domain}")
+    await init_pool()
+
+    logger.info(f"LLM: OllamaPlugin (model={settings.ollama_model})")
+    logger.info(f"Trademark DB: {'연결됨' if get_pool() else 'Mock 모드'}")
 
     yield
 
+    await close_pool()
     app_state.clear()
-    logger.info("Services shut down.")
+    logger.info("Plugins shut down.")
 
 
 app = FastAPI(
@@ -51,7 +52,7 @@ app.add_middleware(
 
 app.add_exception_handler(AppException, app_exception_handler)
 
-app.include_router(v1_router, prefix=API_V1_PREFIX)
+app.include_router(api_router, prefix=API_V1_PREFIX)
 
 
 @app.get("/health")
