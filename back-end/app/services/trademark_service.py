@@ -1,3 +1,5 @@
+"""pg_trgm 기반 상표 유사도 검색 서비스 모듈"""
+
 import asyncpg
 
 from app.core.exceptions import ExternalAPIError
@@ -22,7 +24,7 @@ SEARCH_WITH_CLASS_SQL = """
     FROM trademarks
     WHERE similarity(name, $1) > $2
       AND legal_status = '등록'
-      AND ({class_filter})
+      AND nice_class LIKE ANY($3)
     ORDER BY score DESC
     LIMIT 10
 """
@@ -32,6 +34,7 @@ class TrademarkService:
     """pg_trgm 기반 상표 유사도 검색 서비스"""
 
     def __init__(self, pool: asyncpg.Pool | None = None):
+        """pool이 None이면 Mock 모드로 동작"""
         self._pool = pool
 
     async def search(
@@ -40,7 +43,7 @@ class TrademarkService:
         nice_classes: list[str] | None = None,
         threshold: float = 0.3,
     ) -> TrademarkSearchResponse:
-        """브랜드명 유사 상표 검색"""
+        """브랜드명으로 유사 상표를 검색하고 위험도를 판별"""
         if self._pool is None:
             return TrademarkSearchResponse(
                 brand_name=brand_name, risk="unchecked", matches=[]
@@ -49,10 +52,10 @@ class TrademarkService:
         try:
             async with self._pool.acquire() as conn:
                 if nice_classes:
-                    conditions = [f"nice_class LIKE '%{cls}%'" for cls in nice_classes]
-                    class_filter = " OR ".join(conditions)
-                    query = SEARCH_WITH_CLASS_SQL.format(class_filter=class_filter)
-                    rows = await conn.fetch(query, brand_name, threshold)
+                    patterns = [f"%{cls}%" for cls in nice_classes]
+                    rows = await conn.fetch(
+                        SEARCH_WITH_CLASS_SQL, brand_name, threshold, patterns
+                    )
                 else:
                     rows = await conn.fetch(SEARCH_SQL, brand_name, threshold)
 
@@ -80,7 +83,7 @@ class TrademarkService:
 
     @staticmethod
     def _evaluate_risk(matches: list[TrademarkMatch]) -> str:
-        """최고 유사도 점수 기준 위험도 판별"""
+        """최고 유사도 기준 위험도 판별 (High >= 0.7, Middle >= 0.4, Low)"""
         if not matches:
             return "Low"
         top_score = matches[0].similarity
