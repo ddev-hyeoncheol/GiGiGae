@@ -22,6 +22,9 @@ class BrandRecommendCandidate(BaseModel):
         ...,
         description="추천 브랜드명. 영문이면 영문, 한글이면 한글 (예: Brandium, 솜솜)",
     )
+    brand_description: str = Field(
+        ..., description="브랜드 슬로건 (명사형, 예: 감성을 담은 커피 한 잔)"
+    )
     brand_tags: list[str] = Field(
         ..., description="특성 태그 2~3개 (예: 감각적인, 친근한, 혁신적인)"
     )
@@ -37,6 +40,9 @@ class BrandRecommendResult(BaseModel):
     """API 응답용 스키마 (추천 + 상표 검색 결과)"""
 
     brand_name: str = Field(..., description="추천 브랜드명")
+    brand_description: str = Field(
+        ..., description="브랜드 슬로건 (명사형, 예: 감성을 담은 커피 한 잔)"
+    )
     brand_tags: list[str] = Field(..., description="특성 태그")
     trademark: TrademarkSearchResponse = Field(..., description="상표 검색 결과")
 

@@ -62,6 +62,7 @@ class RecommendService:
             brand_candidates.append(
                 BrandRecommendResult(
                     brand_name=candidate.brand_name,
+                    brand_description=candidate.brand_description,
                     brand_tags=candidate.brand_tags,
                     trademark=trademark_result,
                 )
