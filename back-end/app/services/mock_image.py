@@ -1,5 +1,5 @@
 from app.core.constants import MOCK_LOGO_STYLES
-from app.schemas.brand import LogoUrl
+from app.schemas.recommend import LogoUrl
 from app.services.base_image import BaseImageService
 
 

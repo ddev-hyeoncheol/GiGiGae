@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from app.schemas.brand import LogoUrl
+from app.schemas.recommend import LogoUrl
 
 
 class BaseImageService(ABC):
