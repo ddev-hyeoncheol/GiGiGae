@@ -50,7 +50,7 @@ back-end/
 
 모든 스키마를 `recommend.py` 단일 파일에서 관리:
 
-- `BrandRequest(user_idea, industry, exclude?)`, `BrandCandidate(name, risk_level, tags)`, `BrandResponse(candidates)`
+- `BrandRequest(user_idea, industry, exclude?)`, `BrandCandidate(name, tags)`, `BrandResponse(candidates)`
 - `LogoRequest(selected_name)`, `LogoUrl(url, style)`, `LogoResponse(logos)`
 - `DomainRequest(selected_name, exclude?)`, `DomainCandidate(domain, reason)`, `DomainResponse(domains)`
 
@@ -78,7 +78,7 @@ BaseImageService (ABC)
 
 | Endpoint | Method | 기능 | 상태 |
 |---|---|---|---|
-| `/api/v1/recommend/brand` | POST | 브랜드명 추천 + 상표권 위험도 + 태그 | 구현 완료 |
+| `/api/v1/recommend/brand` | POST | 브랜드명 추천 + 특성 태그 | 구현 완료 |
 | `/api/v1/recommend/logo` | POST | 로고 후보 생성 (Mock) | 구현 완료 |
 | `/api/v1/recommend/domain` | POST | 도메인 후보 추천 | 구현 완료 |
 | `/api/v1/recommend/guide` | POST | NHN Cloud 배포 가이드 리포트 생성 | 미구현 |

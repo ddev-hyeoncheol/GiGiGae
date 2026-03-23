@@ -12,7 +12,7 @@
 
 1. **Brand Recommendation** (`POST /api/v1/recommend/brand`)
    - Input: `BrandRequest` (user_idea: string max 250, industry: string, exclude?: list[str])
-   - Output: `BrandResponse` → `list[BrandCandidate]` (name, risk_level, tags)
+   - Output: `BrandResponse` → `list[BrandCandidate]` (name, tags)
 2. **Logo Generation (Mock)** (`POST /api/v1/recommend/logo`)
    - Input: `LogoRequest` (selected_name: string)
    - Output: `LogoResponse` → `list[LogoUrl]` (url, style)
