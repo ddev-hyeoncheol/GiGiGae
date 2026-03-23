@@ -14,6 +14,8 @@ class Settings(BaseSettings):
 
     kipris_api_key: str | None = None
 
+    database_url: str | None = None
+
     cors_origins: list[str] = ["http://localhost:3000", "http://localhost:5173"]
 
     @property

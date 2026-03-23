@@ -1,0 +1,47 @@
+services:
+  back-end:
+    container_name: back-end
+    hostname: back-end
+    build:
+      context: ./back-end
+      dockerfile: Dockerfile
+    ports:
+      - "9000:9000"
+    env_file:
+      - ./back-end/.env
+    environment:
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      - DATABASE_URL=postgresql+asyncpg://gigigae:${DB_PASSWORD}@db:5432/gigigae
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    container_name: db
+    hostname: db
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: gigigae
+      POSTGRES_USER: gigigae
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  # front-end:
+  #   container_name: front-end
+  #   hostname: front-end
+  #   build:
+  #     context: ./front-end
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - back-end
+
+volumes:
+  db-data:
