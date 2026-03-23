@@ -21,9 +21,9 @@ back-end/
 │   │   └── v1/
 │   │       ├── router.py        # v1 라우터 통합
 │   │       └── endpoints/
-│   │           └── brand.py     # /brand/recommend, /brand/logo, /brand/domain, /brand/guide
+│   │           └── recommend.py # /recommend/brand, /recommend/logo, /recommend/domain
 │   ├── schemas/
-│   │   └── brand.py             # 모든 Request/Response 스키마 통합
+│   │   └── recommend.py         # 모든 Request/Response 스키마 통합
 │   ├── services/
 │   │   ├── base_llm.py          # BaseLLMService (ABC)
 │   │   ├── ollama_service.py    # OllamaService 구현체
@@ -46,13 +46,15 @@ back-end/
 
 ## 핵심 구현 상세
 
-### 1. Pydantic 스키마 (`app/schemas/brand.py`)
+### 1. Pydantic 스키마 (`app/schemas/recommend.py`)
 
-모든 스키마를 `brand.py` 단일 파일에서 관리:
+모든 스키마를 `recommend.py` 단일 파일에서 관리:
 
-- `BrandRequest(user_idea, industry)`, `BrandCandidate(name, risk_level, tags)`, `BrandResponse(candidates)`
+- `BrandRequest(user_idea, industry, exclude?)`, `BrandCandidate(name, risk_level, tags)`, `BrandResponse(candidates)`
 - `LogoRequest(selected_name)`, `LogoUrl(url, style)`, `LogoResponse(logos)`
-- `DomainRequest(selected_name)`, `DomainCandidate(domain, reason)`, `DomainResponse(domains)`
+- `DomainRequest(selected_name, exclude?)`, `DomainCandidate(domain, reason)`, `DomainResponse(domains)`
+
+> `exclude`: 재추천 시 이전에 추천된 항목을 제외하기 위한 optional 필드. 프론트엔드에서 누적 전달.
 
 ### 2. 서비스 추상화 계층 (`app/services/`)
 
@@ -70,16 +72,16 @@ BaseImageService (ABC)
 - `MockImageService`: 샘플 이미지 경로 반환
 - `.env`에 키 존재 여부(falsy 체크)로 실제/Mock 서비스 교체하는 DI 패턴 적용
 
-### 3. API 라우터 (`app/api/v1/endpoints/brand.py`)
+### 3. API 라우터 (`app/api/v1/endpoints/recommend.py`)
 
-모든 엔드포인트는 `brand.py` 하나에 통합하여 관리:
+모든 엔드포인트는 `recommend.py` 하나에 통합하여 관리:
 
 | Endpoint | Method | 기능 | 상태 |
 |---|---|---|---|
-| `/api/v1/brand/recommend` | POST | 브랜드명 추천 + 상표권 위험도 + 태그 | 구현 완료 |
-| `/api/v1/brand/logo` | POST | 로고 후보 생성 (Mock) | 구현 완료 |
-| `/api/v1/brand/domain` | POST | 도메인 후보 추천 | 구현 완료 |
-| `/api/v1/brand/guide` | POST | NHN Cloud 배포 가이드 리포트 생성 | 미구현 |
+| `/api/v1/recommend/brand` | POST | 브랜드명 추천 + 상표권 위험도 + 태그 | 구현 완료 |
+| `/api/v1/recommend/logo` | POST | 로고 후보 생성 (Mock) | 구현 완료 |
+| `/api/v1/recommend/domain` | POST | 도메인 후보 추천 | 구현 완료 |
+| `/api/v1/recommend/guide` | POST | NHN Cloud 배포 가이드 리포트 생성 | 미구현 |
 
 ### 4. 핵심 설정 (`app/core/`)
 
@@ -98,7 +100,7 @@ BaseImageService (ABC)
 
 ### 6. 유틸리티 (`app/utils/`)
 
-- **prompts.py**: `BRAND_SYSTEM_PROMPT`, `DOMAIN_SYSTEM_PROMPT` 및 `build_brand_user_prompt()`, `build_domain_user_prompt()` 함수
+- **prompts.py**: `BRAND_SYSTEM_PROMPT`, `DOMAIN_SYSTEM_PROMPT` 및 `build_brand_user_prompt(exclude)`, `build_domain_user_prompt(exclude)` 함수. exclude 전달 시 프롬프트에 제외 조건 자동 추가
 - **logger.py**: `get_logger()` 공통 Logger 팩토리. `settings.debug` 값에 따라 DEBUG/INFO 레벨 자동 분기
 
 ### 7. 의존성 (`requirements.txt`)
