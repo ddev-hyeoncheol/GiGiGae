@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
 CREATE SEQUENCE IF NOT EXISTS trademarks_id_seq;
 
 CREATE TABLE IF NOT EXISTS trademarks (
@@ -22,3 +24,6 @@ CREATE INDEX IF NOT EXISTS idx_trademarks_name ON trademarks (name);
 CREATE INDEX IF NOT EXISTS idx_trademarks_nice_class ON trademarks (nice_class);
 CREATE INDEX IF NOT EXISTS idx_trademarks_legal_status ON trademarks (legal_status);
 CREATE INDEX IF NOT EXISTS idx_trademarks_name_type ON trademarks (name_type);
+
+-- pg_trgm 유사도 검색용 GIN 인덱스
+CREATE INDEX IF NOT EXISTS idx_trademarks_name_trgm ON trademarks USING GIN (name gin_trgm_ops);
