@@ -51,6 +51,7 @@
 html,
 body {
   height: 100%;
+  overflow: hidden;
   font-family:
     'Pretendard Variable',
     -apple-system,
@@ -59,13 +60,94 @@ body {
     sans-serif;
   color: var(--color-text);
   background-color: var(--color-bg);
+  background-image:
+    radial-gradient(circle 1px at var(--dot-x, 50%) var(--dot-y, 50%), var(--color-border) 0.5px, transparent 0.5px);
+  background-size: 24px 24px;
   transition:
     color var(--transition),
     background-color var(--transition);
 }
 
+body::before,
+body::after,
+#app::before,
+#app::after {
+  content: '';
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(80px);
+}
+
+body::before {
+  width: 600px;
+  height: 400px;
+  background: rgba(79, 70, 229, 0.18);
+  animation: blob-drift-1 12s ease-in-out infinite;
+}
+
+body::after {
+  width: 500px;
+  height: 350px;
+  background: rgba(14, 165, 233, 0.14);
+  animation: blob-drift-2 15s ease-in-out infinite;
+}
+
+#app::before {
+  width: 450px;
+  height: 300px;
+  background: rgba(245, 158, 11, 0.10);
+  animation: blob-drift-3 13s ease-in-out infinite;
+}
+
+#app::after {
+  width: 350px;
+  height: 250px;
+  background: rgba(16, 185, 129, 0.10);
+  animation: blob-drift-4 10s ease-in-out infinite;
+}
+
+@keyframes blob-drift-1 {
+  0%, 100% { top: 5%; left: 5%; }
+  25% { top: 15%; left: 50%; }
+  50% { top: 60%; left: 70%; }
+  75% { top: 40%; left: 10%; }
+}
+
+@keyframes blob-drift-2 {
+  0%, 100% { top: 70%; left: 80%; }
+  25% { top: 30%; left: 60%; }
+  50% { top: 10%; left: 20%; }
+  75% { top: 50%; left: 75%; }
+}
+
+@keyframes blob-drift-3 {
+  0%, 100% { top: 20%; left: 70%; }
+  25% { top: 60%; left: 40%; }
+  50% { top: 80%; left: 15%; }
+  75% { top: 10%; left: 55%; }
+}
+
+@keyframes blob-drift-4 {
+  0%, 100% { top: 75%; left: 20%; }
+  25% { top: 45%; left: 80%; }
+  50% { top: 5%; left: 55%; }
+  75% { top: 65%; left: 45%; }
+}
+
 #app {
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+}
+
+#app > .app-main {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
 }
 
 /* ===== Utility Classes ===== */
