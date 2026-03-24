@@ -9,11 +9,17 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
+import { useWizardStore } from '@/stores/wizard'
 
 withDefaults(defineProps<{ size?: number }>(), { size: 28 })
 
 const router = useRouter()
-const goHome = () => router.push('/')
+const wizard = useWizardStore()
+
+function goHome() {
+  wizard.reset()
+  router.push('/')
+}
 </script>
 
 <style scoped>

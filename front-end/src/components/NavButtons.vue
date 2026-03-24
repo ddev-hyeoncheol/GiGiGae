@@ -29,7 +29,8 @@ const emit = defineEmits<{
 <style scoped>
 .nav-buttons {
   display: flex;
-  gap: 1rem;
+  justify-content: flex-end;
+  gap: 0.75rem;
   margin-top: 0.5rem;
 }
 
