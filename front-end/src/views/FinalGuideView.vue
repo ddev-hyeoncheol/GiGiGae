@@ -1,8 +1,6 @@
 <script setup lang="ts">
   import { useWizardStore } from '@/stores/wizard'
   import { useRouter } from 'vue-router'
-  import StepIndicator from '@/components/StepIndicator.vue'
-
   const wizard = useWizardStore()
   const router = useRouter()
 
@@ -19,7 +17,6 @@
 
 <template>
   <div class="page">
-    <StepIndicator />
     <main class="content">
       <div class="header">
         <h2>배포 가이드</h2>

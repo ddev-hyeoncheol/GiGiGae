@@ -4,11 +4,11 @@
   const wizard = useWizardStore()
 
   const steps = [
-    { number: 1, label: '아이디어' },
-    { number: 2, label: '브랜드명' },
-    { number: 3, label: '로고' },
-    { number: 4, label: '도메인' },
-    { number: 5, label: '가이드' },
+    { number: 1, label: '아이디어 입력' },
+    { number: 2, label: '브랜드명 추천' },
+    { number: 3, label: '로고 추천' },
+    { number: 4, label: '도메인 추천' },
+    { number: 5, label: '배포 가이드' },
   ]
 </script>
 
@@ -24,23 +24,7 @@
           completed: wizard.currentStep > step.number,
         }"
       >
-        <div class="step-circle">
-          <svg
-            v-if="wizard.currentStep > step.number"
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="3"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <polyline points="20 6 9 17 4 12" />
-          </svg>
-          <span v-else>{{ step.number }}</span>
-        </div>
+        <div class="step-bar" />
         <span class="step-label">{{ step.label }}</span>
       </li>
     </ol>
@@ -50,69 +34,53 @@
 <style scoped>
   .step-indicator {
     width: 100%;
-    max-width: 640px;
+    max-width: 560px;
     margin: 0 auto;
     padding: 1.5rem 1rem;
   }
 
   .step-list {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    gap: 6px;
     list-style: none;
-    position: relative;
-  }
-
-  /* 연결선 */
-  .step-list::before {
-    content: '';
-    position: absolute;
-    top: 18px;
-    left: 36px;
-    right: 36px;
-    height: 2px;
-    background-color: var(--color-border);
-    z-index: 0;
   }
 
   .step-item {
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0.5rem;
-    position: relative;
-    z-index: 1;
+    transition: flex-grow 0.4s ease;
   }
 
-  .step-circle {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.85rem;
-    font-weight: 600;
-    background-color: var(--color-surface);
-    border: 2px solid var(--color-border);
-    color: var(--color-text-muted);
+  .step-item.active {
+    flex-grow: 3;
+  }
+
+  .step-bar {
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background-color: var(--color-border);
     transition:
-      background-color 0.2s ease,
-      border-color 0.2s ease,
-      color 0.2s ease;
+      background-color 0.3s ease,
+      height 0.4s ease;
+  }
+
+  .step-item.active .step-bar {
+    height: 6px;
   }
 
   .step-label {
     font-size: 0.75rem;
     color: var(--color-text-muted);
-    transition: color 0.2s ease;
+    transition: color 0.3s ease;
   }
 
   /* Active */
-  .step-item.active .step-circle {
+  .step-item.active .step-bar {
     background-color: var(--color-primary);
-    border-color: var(--color-primary);
-    color: #ffffff;
   }
 
   .step-item.active .step-label {
@@ -121,10 +89,8 @@
   }
 
   /* Completed */
-  .step-item.completed .step-circle {
+  .step-item.completed .step-bar {
     background-color: var(--color-success);
-    border-color: var(--color-success);
-    color: #ffffff;
   }
 
   .step-item.completed .step-label {

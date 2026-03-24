@@ -1,7 +1,6 @@
 <script setup lang="ts">
   import { useWizardStore } from '@/stores/wizard'
   import { useRouter } from 'vue-router'
-  import StepIndicator from '@/components/StepIndicator.vue'
   import type { LogoCandidate } from '@/stores/wizard'
 
   const wizard = useWizardStore()
@@ -38,7 +37,6 @@
 
 <template>
   <div class="page">
-    <StepIndicator />
     <main class="content">
       <div class="header">
         <h2>로고 후보</h2>

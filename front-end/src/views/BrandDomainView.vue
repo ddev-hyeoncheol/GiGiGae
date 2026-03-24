@@ -1,7 +1,6 @@
 <script setup lang="ts">
   import { useWizardStore } from '@/stores/wizard'
   import { useRouter } from 'vue-router'
-  import StepIndicator from '@/components/StepIndicator.vue'
   import type { DomainCandidate } from '@/stores/wizard'
 
   const wizard = useWizardStore()
@@ -42,7 +41,6 @@
 
 <template>
   <div class="page">
-    <StepIndicator />
     <main class="content">
       <div class="header">
         <h2>도메인 추천</h2>
