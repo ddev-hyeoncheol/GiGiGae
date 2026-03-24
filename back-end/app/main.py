@@ -11,6 +11,7 @@ from app.core.config import settings
 from app.core.constants import API_V1_PREFIX
 from app.core.database import close_pool, get_pool, init_pool
 from app.core.exceptions import AppException, app_exception_handler
+from app.plugins.nhn_domain_plugin import NhnDomainPlugin
 from app.plugins.ollama_plugin import OllamaPlugin
 from app.utils.logger import get_logger
 
@@ -25,10 +26,12 @@ async def lifespan(app: FastAPI):
     logger.info("Initializing plugins...")
 
     app_state["llm"] = OllamaPlugin()
+    app_state["nhn_domain"] = NhnDomainPlugin()
 
     await init_pool()
 
     logger.info(f"LLM: OllamaPlugin (model={settings.ollama_model})")
+    logger.info(f"NHN Domain: {settings.nhn_domain_api_url}")
     logger.info(f"Trademark DB: {'연결됨' if get_pool() else 'Mock 모드'}")
 
     yield

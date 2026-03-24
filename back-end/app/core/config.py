@@ -11,6 +11,9 @@ class Settings(BaseSettings):
     ollama_model: str = "gemma3:12b"
     ollama_timeout: int = 120
 
+    nhn_domain_api_url: str = "https://domain.nhn.com/regist/requestDomainSearch.gd"
+    nhn_domain_timeout: int = 10
+
     database_url: str | None = None
 
     cors_origins: list[str] = ["http://localhost:3000", "http://localhost:5173"]
