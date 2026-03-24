@@ -38,7 +38,7 @@
   function handleNext() {
     if (wizard.selectedBrand) {
       wizard.nextStep()
-      router.push('/brand-logo')
+      router.push('/brand-domain')
     }
   }
 

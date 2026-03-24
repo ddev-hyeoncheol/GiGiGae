@@ -6,9 +6,8 @@
   const steps = [
     { number: 1, label: '아이디어 입력' },
     { number: 2, label: '브랜드명 추천' },
-    { number: 3, label: '로고 추천' },
-    { number: 4, label: '도메인 추천' },
-    { number: 5, label: '배포 가이드' },
+    { number: 3, label: '도메인 추천' },
+    { number: 4, label: '배포 가이드' },
   ]
 </script>
 

@@ -18,7 +18,7 @@ export interface DomainCandidate {
 
 export const useWizardStore = defineStore('wizard', () => {
   const currentStep = ref(1)
-  const totalSteps = 5
+  const totalSteps = 4
 
   const idea = ref('')
   const brandCategory = ref<string[]>([])
@@ -38,10 +38,8 @@ export const useWizardStore = defineStore('wizard', () => {
       case 2:
         return selectedBrand.value !== null
       case 3:
-        return selectedLogo.value !== null
-      case 4:
         return selectedDomain.value !== null
-      case 5:
+      case 4:
         return false
       default:
         return false

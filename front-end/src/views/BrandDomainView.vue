@@ -37,7 +37,7 @@
 
   function handleBack() {
     wizard.prevStep()
-    router.push('/brand-logo')
+    router.push('/brand-name')
   }
 </script>
 

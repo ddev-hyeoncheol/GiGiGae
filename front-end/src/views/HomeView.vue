@@ -76,7 +76,8 @@
   <div class="page">
     <main class="content">
       <div class="hero">
-        <p class="subtitle text-muted">AI 기반 브랜드 론칭 자동화 서비스</p>
+        <h1 class="hero-title">어떤 브랜드를 만들고 싶으세요?</h1>
+        <p class="subtitle text-muted">아이디어를 자유롭게 설명해 주세요. 네이밍 전문가가 최적의 브랜드명을 추천해 드립니다.</p>
       </div>
 
       <div class="input-section surface">
@@ -164,15 +165,22 @@
     align-items: center;
     justify-content: center;
     padding: 2rem 1rem;
-    gap: 2rem;
+    gap: 3rem;
   }
 
   .hero {
     text-align: center;
   }
 
+  .hero-title {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--color-text);
+    letter-spacing: -0.02em;
+  }
+
   .subtitle {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     margin-top: 0.5rem;
   }
 
