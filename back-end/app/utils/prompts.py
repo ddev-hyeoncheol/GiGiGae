@@ -21,15 +21,18 @@ DOMAIN_SYSTEM_PROMPT = (
 
 def build_brand_user_prompt(
     brand_idea: str,
-    brand_category: str | None = None,
+    brand_category: list[str] | None = None,
+    brand_tone: list[str] | None = None,
     count: int = 6,
     exclude: list[str] | None = None,
 ) -> str:
     """브랜드 추천 요청용 User Prompt 생성"""
     prompt = f"아이디어: {brand_idea}\n"
     if brand_category:
-        prompt += f"산업: {brand_category}\n"
-    prompt += f"\n" f"브랜드명 {count}개를 추천해."
+        prompt += f"산업: {', '.join(brand_category)}\n"
+    if brand_tone:
+        prompt += f"브랜드 톤: {', '.join(brand_tone)}\n"
+    prompt += f"\n브랜드명 {count}개를 추천해."
     if exclude:
         prompt += f"\n\n다음 브랜드명은 이미 추천했으니 제외해: {', '.join(exclude)}"
     return prompt

@@ -39,12 +39,15 @@ class RecommendService:
         """브랜드명 추천 + 상표 충돌 검색"""
         logger.info(
             f"[Recommend Brand] idea='{request.brand_idea}', "
-            f"category='{request.brand_category}'"
+            f"category={request.brand_category}, "
+            f"tone={request.brand_tone}, "
+            f"exclude={request.exclude}"
         )
 
         user_prompt = build_brand_user_prompt(
             brand_idea=request.brand_idea,
-            brand_category=request.brand_category,
+            brand_category=request.brand_category or None,
+            brand_tone=request.brand_tone or None,
             count=BRAND_CANDIDATE_COUNT,
             exclude=request.exclude or None,
         )

@@ -9,7 +9,8 @@ class BrandRecommendRequest(BaseModel):
     brand_idea: str = Field(
         ..., max_length=250, description="브랜드 아이디어 (250자 이내)"
     )
-    brand_category: str | None = Field(default=None, description="브랜드 카테고리")
+    brand_category: list[str] = Field(default=[], description="브랜드 카테고리")
+    brand_tone: list[str] = Field(default=[], description="브랜드 톤 (예: 트렌디한, 모던한)")
     exclude: list[str] = Field(
         default=[], description="제외할 브랜드명 목록 (재추천 시)"
     )
