@@ -14,7 +14,11 @@
     <div class="app-header-side" />
   </header>
   <main class="app-main">
-    <RouterView />
+    <RouterView v-slot="{ Component }">
+      <Transition name="page" mode="out-in">
+        <component :is="Component" />
+      </Transition>
+    </RouterView>
   </main>
   <DarkModeToggle />
 </template>
@@ -38,4 +42,13 @@
     justify-content: flex-end;
   }
 
+  .page-enter-active,
+  .page-leave-active {
+    transition: opacity 0.25s ease;
+  }
+
+  .page-enter-from,
+  .page-leave-to {
+    opacity: 0;
+  }
 </style>

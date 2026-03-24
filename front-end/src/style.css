@@ -196,20 +196,30 @@ body::after {
   background-color: var(--color-secondary-hover);
 }
 
-.badge-success {
-  background-color: var(--color-success);
-  color: #ffffff;
+.badge-success,
+.badge-warning,
+.badge-danger,
+.badge-muted {
   padding: 0.2rem 0.6rem;
   border-radius: 999px;
   font-size: 0.75rem;
   font-weight: 600;
+  color: #ffffff;
+}
+
+.badge-success {
+  background-color: var(--color-success);
+}
+
+.badge-warning {
+  background-color: var(--color-warning, #f59e0b);
 }
 
 .badge-danger {
   background-color: var(--color-danger);
-  color: #ffffff;
-  padding: 0.2rem 0.6rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 600;
+}
+
+.badge-muted {
+  background-color: var(--color-border);
+  color: var(--color-text);
 }

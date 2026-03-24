@@ -262,14 +262,14 @@
         </template>
 
         <p v-if="error" class="error-msg">{{ error }}</p>
-
-        <LoadingOverlay
-          :visible="loading"
-          :messages="wizard.inputMode === 'idea' ? ideaMessages : brandMessages"
-          :interval="3000"
-        />
       </div>
     </main>
+
+    <LoadingOverlay
+      :visible="loading"
+      :messages="wizard.inputMode === 'idea' ? ideaMessages : brandMessages"
+      :interval="3000"
+    />
   </div>
 </template>
 
@@ -278,6 +278,7 @@
     height: 100%;
     display: flex;
     flex-direction: column;
+    position: relative;
   }
 
   .content {
@@ -313,7 +314,6 @@
   }
 
   .input-section {
-    position: relative;
     width: 100%;
     margin-top: -1.25rem;
     padding: 1.5rem;
