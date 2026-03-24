@@ -6,8 +6,9 @@
   const steps = [
     { number: 1, label: '아이디어 입력' },
     { number: 2, label: '브랜드명 추천' },
-    { number: 3, label: '도메인 추천' },
-    { number: 4, label: '배포 가이드' },
+    { number: 3, label: '상표권 확인' },
+    { number: 4, label: '도메인 추천' },
+    { number: 5, label: '배포 가이드' },
   ]
 </script>
 
@@ -20,7 +21,8 @@
         class="step-item"
         :class="{
           active: wizard.currentStep === step.number,
-          completed: wizard.currentStep > step.number,
+          completed: wizard.currentStep > step.number && !(wizard.inputMode === 'brand' && step.number === 2),
+          skipped: wizard.currentStep > step.number && wizard.inputMode === 'brand' && step.number === 2,
         }"
       >
         <div class="step-bar" />
@@ -92,5 +94,14 @@
 
   .step-item.completed .step-label {
     color: var(--color-success);
+  }
+
+  /* Skipped */
+  .step-item.skipped .step-bar {
+    background-color: var(--color-warning, #f59e0b);
+  }
+
+  .step-item.skipped .step-label {
+    color: var(--color-warning, #f59e0b);
   }
 </style>

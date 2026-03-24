@@ -37,7 +37,7 @@
 
   function handleBack() {
     wizard.prevStep()
-    router.push('/brand-name')
+    router.push('/trademark')
   }
 </script>
 
@@ -48,31 +48,35 @@
         <strong>{{ wizard.selectedBrand?.brand_name }}</strong> 에 사용할 도메인을 선택하세요.
       </PageHeader>
 
-      <ul class="domain-list">
-        <li
-          v-for="domain in wizard.domainCandidates"
-          :key="domain.domain"
-          class="domain-card surface"
-          :class="{
-            selected: wizard.selectedDomain?.domain === domain.domain,
-            unavailable: !domain.available,
-          }"
-          @click="selectDomain(domain)"
-        >
-          <div class="domain-info">
-            <span class="domain-name">{{ domain.domain }}</span>
-            <span class="domain-price text-muted">{{ domain.price }}</span>
-          </div>
-          <span v-if="domain.available" class="badge-success">사용 가능</span>
-          <span v-else class="badge-danger">사용 불가</span>
-        </li>
-      </ul>
+      <div class="content-body">
+        <ul class="domain-list">
+          <li
+            v-for="domain in wizard.domainCandidates"
+            :key="domain.domain"
+            class="domain-card surface"
+            :class="{
+              selected: wizard.selectedDomain?.domain === domain.domain,
+              unavailable: !domain.available,
+            }"
+            @click="selectDomain(domain)"
+          >
+            <div class="domain-info">
+              <span class="domain-name">{{ domain.domain }}</span>
+              <span class="domain-price text-muted">{{ domain.price }}</span>
+            </div>
+            <span v-if="domain.available" class="badge-success">사용 가능</span>
+            <span v-else class="badge-danger">사용 불가</span>
+          </li>
+        </ul>
 
-      <NavButtons
-        :next-disabled="!wizard.canGoNext"
-        @next="handleNext"
-        @back="handleBack"
-      />
+        <NavButtons
+          back-label="이전으로"
+          next-label="배포 가이드 보기"
+          :next-disabled="!wizard.canGoNext"
+          @next="handleNext"
+          @back="handleBack"
+        />
+      </div>
     </main>
   </div>
 </template>
@@ -94,12 +98,19 @@
     gap: 1.5rem;
   }
 
+  .content-body {
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
   .domain-list {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
     width: 100%;
-    max-width: 520px;
     list-style: none;
   }
 

@@ -37,8 +37,9 @@
 
   function handleNext() {
     if (wizard.selectedBrand) {
+      wizard.trademarkResult = wizard.selectedBrand.trademark
       wizard.nextStep()
-      router.push('/brand-domain')
+      router.push('/trademark')
     }
   }
 
@@ -55,32 +56,36 @@
         "{{ wizard.idea }}" 에 대한 브랜드 후보입니다. 하나를 선택하세요.
       </PageHeader>
 
-      <ul class="candidate-list">
-        <li
-          v-for="candidate in wizard.brandCandidates"
-          :key="candidate.brand_name"
-          class="candidate-card surface"
-          :class="{ selected: wizard.selectedBrand?.brand_name === candidate.brand_name }"
-          @click="selectBrand(candidate)"
-        >
-          <div class="card-top">
-            <span class="brand-name">{{ candidate.brand_name }}</span>
-            <span :class="riskClass(candidate.trademark.risk)">
-              {{ riskLabel(candidate.trademark.risk) }}
-            </span>
-          </div>
-          <p class="brand-desc text-muted">{{ candidate.brand_description }}</p>
-          <div class="brand-tags">
-            <span v-for="tag in candidate.brand_tags" :key="tag" class="tag">{{ tag }}</span>
-          </div>
-        </li>
-      </ul>
+      <div class="content-body">
+        <ul class="candidate-list">
+          <li
+            v-for="candidate in wizard.brandCandidates"
+            :key="candidate.brand_name"
+            class="candidate-card surface"
+            :class="{ selected: wizard.selectedBrand?.brand_name === candidate.brand_name }"
+            @click="selectBrand(candidate)"
+          >
+            <div class="card-top">
+              <span class="brand-name">{{ candidate.brand_name }}</span>
+              <span :class="riskClass(candidate.trademark.risk)">
+                {{ riskLabel(candidate.trademark.risk) }}
+              </span>
+            </div>
+            <p class="brand-desc text-muted">{{ candidate.brand_description }}</p>
+            <div class="brand-tags">
+              <span v-for="tag in candidate.brand_tags" :key="tag" class="tag">{{ tag }}</span>
+            </div>
+          </li>
+        </ul>
 
-      <NavButtons
-        :next-disabled="!wizard.canGoNext"
-        @next="handleNext"
-        @back="handleBack"
-      />
+        <NavButtons
+          back-label="이전으로"
+          next-label="상표권 확인하기"
+          :next-disabled="!wizard.canGoNext"
+          @next="handleNext"
+          @back="handleBack"
+        />
+      </div>
     </main>
   </div>
 </template>
@@ -102,12 +107,19 @@
     gap: 1.5rem;
   }
 
+  .content-body {
+    width: 100%;
+    max-width: 720px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
   .candidate-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 0.75rem;
     width: 100%;
-    max-width: 720px;
     list-style: none;
   }
 
@@ -179,4 +191,5 @@
     border-radius: 999px;
     font-weight: 600;
   }
+
 </style>

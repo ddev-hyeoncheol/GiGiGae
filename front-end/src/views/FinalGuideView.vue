@@ -26,50 +26,49 @@
         description="선택하신 정보를 바탕으로 생성된 NHN Cloud 배포 가이드입니다."
       />
 
-      <div class="summary surface">
-        <h3>선택 요약</h3>
-        <dl class="summary-list">
-          <div class="summary-item">
-            <dt>아이디어</dt>
-            <dd>{{ wizard.idea }}</dd>
-          </div>
-          <div class="summary-item">
-            <dt>브랜드명</dt>
-            <dd>
-              {{ wizard.selectedBrand?.brand_name }}
-              <span
-                :class="
-                  wizard.selectedBrand?.trademark.risk === 'Low' ? 'badge-success' : 'badge-danger'
-                "
-              >
-                {{ wizard.selectedBrand?.trademark.risk }}
-              </span>
-            </dd>
-          </div>
-          <div class="summary-item">
-            <dt>로고</dt>
-            <dd>{{ wizard.selectedLogo?.label }}</dd>
-          </div>
-          <div class="summary-item">
-            <dt>도메인</dt>
-            <dd>{{ wizard.selectedDomain?.domain }}</dd>
-          </div>
-        </dl>
-      </div>
-
-      <div class="report surface">
-        <h3>NHN Cloud 배포 가이드</h3>
-        <div class="report-placeholder text-muted">
-          <p>이 영역에 LLM이 생성한 배포 가이드 리포트가 표시됩니다.</p>
-          <p>Markdown 또는 HTML 형식으로 렌더링 예정입니다.</p>
+      <div class="content-body">
+        <div class="summary surface">
+          <h3>선택 요약</h3>
+          <dl class="summary-list">
+            <div class="summary-item">
+              <dt>아이디어</dt>
+              <dd>{{ wizard.idea }}</dd>
+            </div>
+            <div class="summary-item">
+              <dt>브랜드명</dt>
+              <dd>
+                {{ wizard.selectedBrand?.brand_name }}
+                <span
+                  :class="
+                    wizard.selectedBrand?.trademark.risk === 'Low' ? 'badge-success' : 'badge-danger'
+                  "
+                >
+                  {{ wizard.selectedBrand?.trademark.risk }}
+                </span>
+              </dd>
+            </div>
+            <div class="summary-item">
+              <dt>도메인</dt>
+              <dd>{{ wizard.selectedDomain?.domain }}</dd>
+            </div>
+          </dl>
         </div>
-      </div>
 
-      <NavButtons
-        next-label="처음으로"
-        @next="handleReset"
-        @back="handleBack"
-      />
+        <div class="report surface">
+          <h3>NHN Cloud 배포 가이드</h3>
+          <div class="report-placeholder text-muted">
+            <p>이 영역에 LLM이 생성한 배포 가이드 리포트가 표시됩니다.</p>
+            <p>Markdown 또는 HTML 형식으로 렌더링 예정입니다.</p>
+          </div>
+        </div>
+
+        <NavButtons
+          back-label="이전으로"
+          next-label="처음으로"
+          @next="handleReset"
+          @back="handleBack"
+        />
+      </div>
     </main>
   </div>
 </template>
@@ -91,10 +90,17 @@
     gap: 1.5rem;
   }
 
+  .content-body {
+    width: 100%;
+    max-width: 560px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
   .summary,
   .report {
     width: 100%;
-    max-width: 560px;
     padding: 1.5rem;
   }
 
