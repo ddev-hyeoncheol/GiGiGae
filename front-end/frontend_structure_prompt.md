@@ -43,6 +43,7 @@ front-end/
 │   │   ├── types.ts                   # 백엔드 Pydantic 스키마 미러링 타입
 │   │   ├── recommend.ts               # 브랜드/도메인 추천 API 함수
 │   │   ├── trademark.ts               # 상표 검색 API 함수
+│   │   ├── domain.ts                  # 도메인 가용성 확인 API 함수
 │   │   └── index.ts                   # 모듈 통합 export
 │   ├── router/
 │   │   └── index.ts                   # Vue Router 라우트 정의 (5개 뷰)
@@ -88,7 +89,7 @@ front-end/
 ### 3. App.vue
 
 - 3-column grid 헤더: `<AppLogo />` | `<StepIndicator />` | 빈 영역
-- `<main class="app-main">` 스크롤 영역으로 `<RouterView />` 감쌈
+- `<main class="app-main">` 스크롤 영역으로 `<RouterView />` 감쌈 (fade 페이지 전환 애니메이션)
 - `<DarkModeToggle />`
 
 ### 4. 라우팅 (`router/index.ts`)
@@ -115,9 +116,11 @@ front-end/
 - `TrademarkMatch`, `TrademarkSearchRequest`, `TrademarkSearchResponse`
 - `BrandRecommendRequest(brand_idea, brand_category?, brand_tone?, exclude?)`, `BrandRecommendResult`, `BrandRecommendResponse`
 - `DomainRecommendRequest`, `DomainRecommendCandidate`, `DomainRecommendResponse`
+- `DomainCheckRequest`, `DomainCheckResult`
 
 **`recommend.ts`**: `recommendBrand()`, `recommendDomain()`
 **`trademark.ts`**: `searchTrademark()`
+**`domain.ts`**: `checkDomain()`
 **`index.ts`**: 통합 re-export
 
 ### 6. Pinia 위자드 스토어 (`stores/wizard.ts`)
@@ -147,7 +150,7 @@ nextStep(), prevStep(), goToStep(step), reset()
 ```
 
 - **persist 미사용**: 새로고침 시 상태 초기화
-- `DomainCandidate`는 로컬 인터페이스 (스토어 내 정의)
+- `DomainCandidate(domain_name, domain_reason, available, price, promotion_price)`는 로컬 인터페이스 (스토어 내 정의)
 - `canGoNext` — inputMode에 따라 case 1 검증 분기 (idea: 아이디어 길이, brand: 브랜드명 길이)
 
 ### 7. StepIndicator 컴포넌트
@@ -166,7 +169,7 @@ nextStep(), prevStep(), goToStep(step), reset()
 | HomeView (Step 1) | 구현 완료 | 연동 완료 (`recommendBrand` + `searchTrademark`, 탭 모드 전환, 카테고리/톤 옵션, 로딩 오버레이) |
 | BrandNameView (Step 2) | 구현 완료 | 연동 완료 (결과 표시 + 선택) |
 | BrandTrademarkView (Step 3) | 구현 완료 | 연동 완료 (상표 위험도 + 유사 상표 목록) |
-| BrandDomainView (Step 4) | 구현 완료 | Mock 데이터 (NHN Cloud API 연동 예정) |
+| BrandDomainView (Step 4) | 구현 완료 | 연동 완료 (LLM 도메인 추천 + NHN 가용성 .com 병렬 확인, 로딩 오버레이) |
 | FinalGuideView (Step 5) | 구현 완료 | 예정 |
 
 ### 9. 배경 효과 (`style.css`)
@@ -215,5 +218,5 @@ npm run dev
 2. ~~레이아웃/공통 컴포넌트~~ — 완료
 3. ~~Step 1 (입력, 탭 모드) + Step 2 (브랜드 추천)~~ — 완료 (백엔드 연동 포함)
 4. ~~Step 3 (상표권 확인)~~ — 완료 (백엔드 연동 포함)
-5. Step 4 (도메인, NHN Cloud API 연동) — 작업 중
+5. ~~Step 4 (도메인, NHN Cloud API 연동)~~ — 완료
 6. Step 5 (가이드) + 마무리 — 예정

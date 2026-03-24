@@ -21,15 +21,19 @@ back-end/
 │   ├── api/
 │   │   ├── router.py                # API 라우터 통합
 │   │   ├── recommend.py             # /recommend/brand, /recommend/domain
-│   │   └── trademark.py             # /trademark/search
+│   │   ├── trademark.py             # /trademark/search
+│   │   └── domain.py                # /domain/check
 │   ├── schemas/
 │   │   ├── recommend.py             # 브랜드/도메인 추천 스키마
-│   │   └── trademark.py             # 상표 검색 스키마
+│   │   ├── trademark.py             # 상표 검색 스키마
+│   │   └── domain.py                # 도메인 가용성 확인 스키마
 │   ├── services/                    # 비즈니스 로직
 │   │   ├── recommend_service.py     # LLM 추천 + 상표 검색 조합
-│   │   └── trademark_service.py     # pg_trgm 기반 상표 유사도 검색
+│   │   ├── trademark_service.py     # pg_trgm 기반 상표 유사도 검색
+│   │   └── domain_service.py        # NHN 도메인 가용성 확인
 │   ├── plugins/                     # 외부 도구 (갈아끼울 수 있음)
-│   │   └── ollama_plugin.py         # Ollama LLM 클라이언트
+│   │   ├── ollama_plugin.py         # Ollama LLM 클라이언트
+│   │   └── nhn_domain_plugin.py     # NHN Cloud 도메인 API 클라이언트
 │   ├── core/
 │   │   ├── config.py                # Settings (pydantic-settings, .env 로드)
 │   │   ├── constants.py             # 상수 정의
@@ -60,6 +64,11 @@ back-end/
 - `DomainRecommendCandidate(domain_name, domain_reason)` - 도메인 후보
 - `DomainRecommendResponse(domain_candidates)` - 도메인 추천 응답
 
+**`schemas/domain.py`** - 도메인 가용성 확인:
+
+- `DomainCheckRequest(domain_name)` - 단건 가용성 확인 요청
+- `DomainCheckResult(domain_name, available, message, price?, promotion_price?)` - NHN API 응답
+
 **`schemas/trademark.py`** - 상표 검색:
 
 - `TrademarkSearchRequest(brand_name, nice_classes?, threshold?)` - 상표 검색 요청
@@ -73,29 +82,32 @@ back-end/
 ### 2. 플러그인 (`app/plugins/`)
 
 ```
-OllamaPlugin       # Ollama LLM API 클라이언트, Pydantic Structured Output
+OllamaPlugin           # Ollama LLM API 클라이언트, Pydantic Structured Output
+NhnDomainPlugin        # NHN Cloud 도메인 가용성 확인 클라이언트
 ```
 
-- `generate(prompt, system_prompt, schema)` 메서드로 Pydantic 스키마 기반 Structured Output 반환
-- `httpx.Timeout` 적용, `LLMTimeoutError`/`LLMGenerationError` 에러 핸들링
+- **OllamaPlugin**: `generate(prompt, system_prompt, schema)` 메서드로 Pydantic 스키마 기반 Structured Output 반환. `httpx.Timeout` 적용, `LLMTimeoutError`/`LLMGenerationError` 에러 핸들링
+- **NhnDomainPlugin**: `check_availability(domain_name)` 메서드로 NHN API POST 호출. `price: false` 응답 핸들링, `ExternalAPIError` 에러 핸들링
 
 ### 3. 서비스 (`app/services/`) - 비즈니스 로직
 
 - **`recommend_service.py`**: `OllamaPlugin` + `TrademarkService`를 조합하여 브랜드 추천 + 상표 충돌 검색 수행
 - **`trademark_service.py`**: asyncpg + pg_trgm 기반 상표 유사도 검색, 위험도 판별 (Low / Middle / High)
+- **`domain_service.py`**: `NhnDomainPlugin`을 사용하여 도메인 가용성 확인
 
 ### 4. API 라우터 (`app/api/`)
 
 | Endpoint | Method | 기능 | 백엔드 | 프론트 연동 |
 |---|---|---|---|---|
 | `/api/v1/recommend/brand` | POST | 브랜드명 추천 + 상표 충돌 검색 | 구현 완료 | 연동 완료 |
-| `/api/v1/recommend/domain` | POST | 도메인 후보 추천 | 구현 완료 | 예정 |
+| `/api/v1/recommend/domain` | POST | 도메인 중간 이름 추천 (TLD 제외, 10개) | 구현 완료 | 연동 완료 |
 | `/api/v1/trademark/search` | POST | 상표 유사도 검색 | 구현 완료 | 연동 완료 |
+| `/api/v1/domain/check` | POST | NHN Cloud 도메인 가용성 확인 | 구현 완료 | 연동 완료 |
 | `/api/v1/guide/deploy` | POST | NHN Cloud 배포 가이드 생성 | 예정 | 예정 |
 
 ### 5. 핵심 설정 (`app/core/`)
 
-- **config.py**: `pydantic-settings`로 `.env` 로드. Ollama 모델명/URL/Timeout, DATABASE_URL 관리
+- **config.py**: `pydantic-settings`로 `.env` 로드. Ollama 모델명/URL/Timeout, NHN Domain API URL/Timeout, DATABASE_URL 관리
 - **constants.py**: `API_V1_PREFIX`, `BRAND_CANDIDATE_COUNT`(6) 상수 정의
 - **database.py**: asyncpg 커넥션 풀 생성/종료/조회. DI로 서비스에 주입
 - **exceptions.py**: `AppException` 기본 클래스 + `LLMTimeoutError`, `LLMGenerationError`, `ExternalAPIError` 정의
@@ -106,12 +118,12 @@ OllamaPlugin       # Ollama LLM API 클라이언트, Pydantic Structured Output
 - CORS 미들웨어 설정 (프론트엔드 연동 대비, localhost:3000/5173)
 - API 라우터 include (`prefix="/api/v1"`)
 - 전역 예외 핸들러 등록
-- lifespan 이벤트로 `OllamaPlugin` 초기화, DB 커넥션 풀 생성/종료
+- lifespan 이벤트로 `OllamaPlugin`, `NhnDomainPlugin` 초기화, DB 커넥션 풀 생성/종료
 - `/health` Health check 엔드포인트
 
 ### 7. 유틸리티 (`app/utils/`)
 
-- **prompts.py**: `BRAND_SYSTEM_PROMPT`, `DOMAIN_SYSTEM_PROMPT` 및 `build_brand_user_prompt(brand_idea, brand_category, brand_tone, count, exclude)`, `build_domain_user_prompt(brand_name, count, exclude)` 함수
+- **prompts.py**: `BRAND_SYSTEM_PROMPT`, `DOMAIN_SYSTEM_PROMPT` 및 `build_brand_user_prompt(brand_idea, brand_category, brand_tone, count, exclude)`, `build_domain_user_prompt(brand_name, count=10, exclude)` 함수. 도메인은 TLD 없이 중간 이름만 추천
 - **logger.py**: `get_logger()` 공통 Logger 팩토리
 
 ### 8. 의존성 (`requirements.txt`)
