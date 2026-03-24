@@ -1,7 +1,7 @@
 # FastAPI Backend Structure - 작업 지시서
 
 > 생성일: 2026-03-20
-> 최종 수정: 2026-03-23
+> 최종 수정: 2026-03-24
 > 프로젝트: GiGiGae (AI 기반 브랜드 론칭 자동화 서비스)
 
 ---
@@ -52,9 +52,9 @@ back-end/
 **`schemas/recommend.py`** - 브랜드/도메인 추천:
 
 - `BrandRecommendRequest(brand_idea, brand_category?, exclude?)` - 브랜드 추천 요청
-- `BrandRecommendCandidate(brand_name, brand_tags)` - LLM 반환용
+- `BrandRecommendCandidate(brand_name, brand_description, brand_tags)` - LLM 반환용
 - `BrandRecommendLLMResponse(brand_candidates)` - LLM 반환용 응답
-- `BrandRecommendResult(brand_name, brand_tags, trademark)` - API 응답용 (추천 + 상표 결과)
+- `BrandRecommendResult(brand_name, brand_description, brand_tags, trademark)` - API 응답용 (추천 + 상표 결과)
 - `BrandRecommendResponse(brand_candidates)` - 최종 API 응답
 - `DomainRecommendRequest(brand_name, exclude?)` - 도메인 추천 요청
 - `DomainRecommendCandidate(domain_name, domain_reason)` - 도메인 후보
@@ -84,16 +84,17 @@ OllamaPlugin       # Ollama LLM API 클라이언트, Pydantic Structured Output
 
 ### 4. API 라우터 (`app/api/`)
 
-| Endpoint | Method | 기능 | 상태 |
-|---|---|---|---|
-| `/api/v1/recommend/brand` | POST | 브랜드명 추천 + 상표 충돌 검색 | 구현 완료 |
-| `/api/v1/recommend/domain` | POST | 도메인 후보 추천 | 구현 완료 |
-| `/api/v1/trademark/search` | POST | 상표 유사도 검색 | 구현 완료 |
+| Endpoint | Method | 기능 | 백엔드 | 프론트 연동 |
+|---|---|---|---|---|
+| `/api/v1/recommend/brand` | POST | 브랜드명 추천 + 상표 충돌 검색 | 구현 완료 | 연동 완료 |
+| `/api/v1/recommend/domain` | POST | 도메인 후보 추천 | 구현 완료 | 예정 |
+| `/api/v1/trademark/search` | POST | 상표 유사도 검색 | 구현 완료 | 예정 |
+| `/api/v1/guide/deploy` | POST | NHN Cloud 배포 가이드 생성 | 예정 | 예정 |
 
 ### 5. 핵심 설정 (`app/core/`)
 
 - **config.py**: `pydantic-settings`로 `.env` 로드. Ollama 모델명/URL/Timeout, DATABASE_URL 관리
-- **constants.py**: `API_V1_PREFIX`, `BRAND_CANDIDATE_COUNT`(5) 상수 정의
+- **constants.py**: `API_V1_PREFIX`, `BRAND_CANDIDATE_COUNT`(6) 상수 정의
 - **database.py**: asyncpg 커넥션 풀 생성/종료/조회. DI로 서비스에 주입
 - **exceptions.py**: `AppException` 기본 클래스 + `LLMTimeoutError`, `LLMGenerationError`, `ExternalAPIError` 정의
 
@@ -108,7 +109,7 @@ OllamaPlugin       # Ollama LLM API 클라이언트, Pydantic Structured Output
 
 ### 7. 유틸리티 (`app/utils/`)
 
-- **prompts.py**: `BRAND_SYSTEM_PROMPT`, `DOMAIN_SYSTEM_PROMPT` 및 `build_brand_user_prompt(brand_idea, brand_category, exclude)`, `build_domain_user_prompt(brand_name, exclude)` 함수
+- **prompts.py**: `BRAND_SYSTEM_PROMPT`, `DOMAIN_SYSTEM_PROMPT` 및 `build_brand_user_prompt(brand_idea, brand_category, count, exclude)`, `build_domain_user_prompt(brand_name, count, exclude)` 함수
 - **logger.py**: `get_logger()` 공통 Logger 팩토리
 
 ### 8. 의존성 (`requirements.txt`)

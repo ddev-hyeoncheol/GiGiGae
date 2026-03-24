@@ -22,7 +22,7 @@ DOMAIN_SYSTEM_PROMPT = (
 def build_brand_user_prompt(
     brand_idea: str,
     brand_category: str | None = None,
-    count: int = 5,
+    count: int = 6,
     exclude: list[str] | None = None,
 ) -> str:
     """브랜드 추천 요청용 User Prompt 생성"""
