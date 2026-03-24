@@ -14,6 +14,10 @@
   }
 
   function selectBrand(candidate: BrandCandidate) {
+    if (wizard.selectedBrand?.brand_name !== candidate.brand_name) {
+      wizard.domainCandidates = []
+      wizard.selectedDomain = null
+    }
     wizard.selectedBrand = candidate
   }
 
@@ -172,24 +176,6 @@
     border-radius: 999px;
     background-color: var(--color-surface-alt, var(--color-border));
     color: var(--color-text-muted, var(--color-text));
-  }
-
-  .badge-warning {
-    background-color: #f39c12;
-    color: #fff;
-    font-size: 0.75rem;
-    padding: 0.2rem 0.6rem;
-    border-radius: 999px;
-    font-weight: 600;
-  }
-
-  .badge-muted {
-    background-color: var(--color-border);
-    color: var(--color-text);
-    font-size: 0.75rem;
-    padding: 0.2rem 0.6rem;
-    border-radius: 999px;
-    font-weight: 600;
   }
 
 </style>

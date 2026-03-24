@@ -54,3 +54,16 @@ export interface DomainRecommendCandidate {
 export interface DomainRecommendResponse {
   domain_candidates: DomainRecommendCandidate[]
 }
+
+// ── 도메인 가용성 확인 ──
+export interface DomainCheckRequest {
+  domain_name: string
+}
+
+export interface DomainCheckResult {
+  domain_name: string
+  available: boolean
+  message: string
+  price: string | null
+  promotion_price: string | null
+}

@@ -76,17 +76,17 @@ onUnmounted(stopCycle)
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.25rem;
+  gap: 1.5rem;
 }
 
 .dots {
   display: flex;
-  gap: 6px;
+  gap: 12px;
 }
 
 .dot {
-  width: 10px;
-  height: 10px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: var(--color-primary);
   opacity: 0.25;
@@ -108,7 +108,7 @@ onUnmounted(stopCycle)
 
 .overlay-msg {
   color: var(--color-text);
-  font-size: 0.9rem;
+  font-size: 1.2rem;
   font-weight: 500;
   text-align: center;
 }

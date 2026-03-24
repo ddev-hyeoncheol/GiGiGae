@@ -1,26 +1,73 @@
 <script setup lang="ts">
+  import { ref, onMounted } from 'vue'
   import { useWizardStore } from '@/stores/wizard'
   import { useRouter } from 'vue-router'
   import type { DomainCandidate } from '@/stores/wizard'
+  import { recommendDomain, checkDomain } from '@/api'
   import PageHeader from '@/components/PageHeader.vue'
   import NavButtons from '@/components/NavButtons.vue'
+  import LoadingOverlay from '@/components/LoadingOverlay.vue'
 
   const wizard = useWizardStore()
   const router = useRouter()
 
-  /* TODO: NHN Cloud API 연동 시 교체 */
-  const brandSlug = (wizard.selectedBrand?.brand_name ?? 'brand').toLowerCase()
-  const mockDomains: DomainCandidate[] = [
-    { domain: `${brandSlug}.com`, available: true, price: '15,000원/년' },
-    { domain: `${brandSlug}.co.kr`, available: true, price: '22,000원/년' },
-    { domain: `${brandSlug}.kr`, available: false, price: '-' },
-    { domain: `${brandSlug}.io`, available: true, price: '45,000원/년' },
-    { domain: `${brandSlug}.shop`, available: true, price: '12,000원/년' },
+  const loading = ref(false)
+  const error = ref('')
+
+  const loadingMessages = [
+    '브랜드에 어울리는 도메인을 추천하고 있어요.',
+    '추천된 도메인의 등록 가능 여부를 확인하고 있어요.',
+    '가격 정보를 가져오고 있어요.',
+    '이제 거의 다 됐어요.',
   ]
 
-  if (wizard.domainCandidates.length === 0) {
-    wizard.domainCandidates = mockDomains
+  if (!wizard.selectedBrand) {
+    router.replace('/')
   }
+
+  onMounted(async () => {
+    if (wizard.domainCandidates.length > 0) return
+
+    loading.value = true
+    error.value = ''
+
+    try {
+      const brandName = wizard.selectedBrand?.brand_name ?? ''
+      const res = await recommendDomain({ brand_name: brandName })
+
+      const checkResults = await Promise.allSettled(
+        res.domain_candidates.map(async (candidate) => {
+          const domainName = `${candidate.domain_name}.com`
+          try {
+            const check = await checkDomain({ domain_name: domainName })
+            return {
+              domain_name: domainName,
+              domain_reason: candidate.domain_reason,
+              available: check.available,
+              price: check.price,
+              promotion_price: check.promotion_price,
+            } as DomainCandidate
+          } catch {
+            return {
+              domain_name: domainName,
+              domain_reason: candidate.domain_reason,
+              available: false,
+              price: null,
+              promotion_price: null,
+            } as DomainCandidate
+          }
+        })
+      )
+
+      wizard.domainCandidates = checkResults
+        .filter((r): r is PromiseFulfilledResult<DomainCandidate> => r.status === 'fulfilled')
+        .map(r => r.value)
+    } catch (e) {
+      error.value = e instanceof Error ? e.message : '도메인 추천 중 오류가 발생했습니다.'
+    } finally {
+      loading.value = false
+    }
+  })
 
   function selectDomain(domain: DomainCandidate) {
     if (domain.available) {
@@ -49,27 +96,35 @@
       </PageHeader>
 
       <div class="content-body">
-        <ul class="domain-list">
+        <p v-if="error" class="error-msg">{{ error }}</p>
+
+        <ul v-if="!loading && wizard.domainCandidates.length > 0" class="domain-list">
           <li
             v-for="domain in wizard.domainCandidates"
-            :key="domain.domain"
+            :key="domain.domain_name"
             class="domain-card surface"
             :class="{
-              selected: wizard.selectedDomain?.domain === domain.domain,
+              selected: wizard.selectedDomain?.domain_name === domain.domain_name,
               unavailable: !domain.available,
             }"
             @click="selectDomain(domain)"
           >
             <div class="domain-info">
-              <span class="domain-name">{{ domain.domain }}</span>
-              <span class="domain-price text-muted">{{ domain.price }}</span>
+              <span class="domain-name">{{ domain.domain_name }}</span>
+              <span class="domain-reason text-muted">{{ domain.domain_reason }}</span>
             </div>
-            <span v-if="domain.available" class="badge-success">사용 가능</span>
-            <span v-else class="badge-danger">사용 불가</span>
+            <div class="domain-right">
+              <span v-if="domain.available" class="domain-price">
+                {{ domain.promotion_price ?? domain.price ?? '' }}
+              </span>
+              <span v-if="domain.available" class="badge-success">등록 가능</span>
+              <span v-else class="badge-danger">등록 불가</span>
+            </div>
           </li>
         </ul>
 
         <NavButtons
+          v-if="!loading"
           back-label="이전으로"
           next-label="배포 가이드 보기"
           :next-disabled="!wizard.canGoNext"
@@ -78,6 +133,12 @@
         />
       </div>
     </main>
+
+    <LoadingOverlay
+      :visible="loading"
+      :messages="loadingMessages"
+      :interval="3000"
+    />
   </div>
 </template>
 
@@ -86,6 +147,7 @@
     height: 100%;
     display: flex;
     flex-direction: column;
+    position: relative;
   }
 
   .content {
@@ -100,7 +162,7 @@
 
   .content-body {
     width: 100%;
-    max-width: 520px;
+    max-width: 600px;
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -150,7 +212,25 @@
     font-size: 1rem;
   }
 
-  .domain-price {
+  .domain-reason {
     font-size: 0.8rem;
+  }
+
+  .domain-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .domain-price {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--color-text-muted);
+  }
+
+  .error-msg {
+    color: var(--color-danger, #e74c3c);
+    font-size: 0.85rem;
+    margin: 0;
   }
 </style>

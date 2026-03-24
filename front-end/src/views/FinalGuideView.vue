@@ -49,7 +49,7 @@
             </div>
             <div class="summary-item">
               <dt>도메인</dt>
-              <dd>{{ wizard.selectedDomain?.domain }}</dd>
+              <dd>{{ wizard.selectedDomain?.domain_name }}</dd>
             </div>
           </dl>
         </div>

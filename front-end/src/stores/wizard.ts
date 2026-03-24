@@ -13,9 +13,11 @@ export interface LogoCandidate {
 }
 
 export interface DomainCandidate {
-  domain: string
+  domain_name: string
+  domain_reason: string
   available: boolean
-  price: string
+  price: string | null
+  promotion_price: string | null
 }
 
 export const useWizardStore = defineStore('wizard', () => {
