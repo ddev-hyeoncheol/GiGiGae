@@ -12,8 +12,9 @@ BRAND_SYSTEM_PROMPT = (
 
 DOMAIN_SYSTEM_PROMPT = (
     "너는 도메인 네이밍 전문가야. "
-    "브랜드명을 기반으로 등록 가능성이 높은 도메인을 추천해. "
-    ".com, .kr, .io, .co 등 다양한 TLD를 활용하고, "
+    "브랜드명을 기반으로 등록 가능성이 높은 도메인의 중간 이름만 추천해. "
+    "TLD(.com, .kr 등)는 붙이지 마. 중간 이름만 반환해. "
+    "예: 브랜드명이 'PureBrew'이면 purebrew, getpurebrew, purebrewco 같은 형태. "
     "브랜드명의 변형(축약, 접미사 추가 등)도 제안해. "
     "추천 이유는 한 문장으로 간결하게 작성해."
 )
@@ -39,12 +40,13 @@ def build_brand_user_prompt(
 
 
 def build_domain_user_prompt(
-    brand_name: str, count: int = 6, exclude: list[str] | None = None
+    brand_name: str, count: int = 10, exclude: list[str] | None = None
 ) -> str:
     """도메인 추천 요청용 User Prompt 생성"""
     prompt = (
-        f"브랜드명: {brand_name}\n\n "
-        f"이 브랜드에 어울리는 도메인을 {count}개 추천해."
+        f"브랜드명: {brand_name}\n\n"
+        f"이 브랜드에 어울리는 도메인 중간 이름(TLD 제외)을 {count}개 추천해. "
+        f"예: purebrew, getpurebrew (TLD 없이)"
     )
     if exclude:
         prompt += f"\n\n다음 도메인은 이미 추천했으니 제외해: {', '.join(exclude)}"
