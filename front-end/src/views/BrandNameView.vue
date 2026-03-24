@@ -2,6 +2,8 @@
   import { useWizardStore } from '@/stores/wizard'
   import { useRouter } from 'vue-router'
   import type { BrandCandidate } from '@/stores/wizard'
+  import PageHeader from '@/components/PageHeader.vue'
+  import NavButtons from '@/components/NavButtons.vue'
 
   const wizard = useWizardStore()
   const router = useRouter()
@@ -49,12 +51,9 @@
 <template>
   <div class="page">
     <main class="content">
-      <div class="header">
-        <h2>브랜드명 추천</h2>
-        <p class="text-muted">
-          "{{ wizard.idea }}" 에 대한 브랜드 후보입니다. 하나를 선택하세요.
-        </p>
-      </div>
+      <PageHeader title="브랜드명 추천">
+        "{{ wizard.idea }}" 에 대한 브랜드 후보입니다. 하나를 선택하세요.
+      </PageHeader>
 
       <ul class="candidate-list">
         <li
@@ -77,12 +76,11 @@
         </li>
       </ul>
 
-      <div class="nav-buttons">
-        <button class="btn-secondary" @click="handleBack">이전</button>
-        <button class="btn-primary" :disabled="!wizard.canGoNext" @click="handleNext">
-          다음
-        </button>
-      </div>
+      <NavButtons
+        :next-disabled="!wizard.canGoNext"
+        @next="handleNext"
+        @back="handleBack"
+      />
     </main>
   </div>
 </template>
@@ -101,21 +99,6 @@
     align-items: center;
     padding: 1rem 1rem 2rem;
     gap: 1.5rem;
-  }
-
-  .header {
-    text-align: center;
-  }
-
-  .header h2 {
-    font-size: 1.8rem;
-    font-weight: 700;
-  }
-
-  .header p {
-    margin-top: 0.4rem;
-    font-size: 0.95rem;
-    max-width: 480px;
   }
 
   .candidate-list {
@@ -194,16 +177,5 @@
     padding: 0.2rem 0.6rem;
     border-radius: 999px;
     font-weight: 600;
-  }
-
-  .nav-buttons {
-    display: flex;
-    gap: 1rem;
-    margin-top: 0.5rem;
-  }
-
-  .btn-primary:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
   }
 </style>

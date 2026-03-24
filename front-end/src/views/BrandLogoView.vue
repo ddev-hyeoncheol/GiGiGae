@@ -2,6 +2,8 @@
   import { useWizardStore } from '@/stores/wizard'
   import { useRouter } from 'vue-router'
   import type { LogoCandidate } from '@/stores/wizard'
+  import PageHeader from '@/components/PageHeader.vue'
+  import NavButtons from '@/components/NavButtons.vue'
 
   const wizard = useWizardStore()
   const router = useRouter()
@@ -38,12 +40,9 @@
 <template>
   <div class="page">
     <main class="content">
-      <div class="header">
-        <h2>로고 후보</h2>
-        <p class="text-muted">
-          <strong>{{ wizard.selectedBrand?.brand_name }}</strong> 에 대한 로고 후보입니다.
-        </p>
-      </div>
+      <PageHeader title="로고 후보">
+        <strong>{{ wizard.selectedBrand?.brand_name }}</strong> 에 대한 로고 후보입니다.
+      </PageHeader>
 
       <div class="logo-grid">
         <div
@@ -74,12 +73,11 @@
         </div>
       </div>
 
-      <div class="nav-buttons">
-        <button class="btn-secondary" @click="handleBack">이전</button>
-        <button class="btn-primary" :disabled="!wizard.canGoNext" @click="handleNext">
-          다음
-        </button>
-      </div>
+      <NavButtons
+        :next-disabled="!wizard.canGoNext"
+        @next="handleNext"
+        @back="handleBack"
+      />
     </main>
   </div>
 </template>
@@ -98,20 +96,6 @@
     align-items: center;
     padding: 1rem 1rem 2rem;
     gap: 1.5rem;
-  }
-
-  .header {
-    text-align: center;
-  }
-
-  .header h2 {
-    font-size: 1.8rem;
-    font-weight: 700;
-  }
-
-  .header p {
-    margin-top: 0.4rem;
-    font-size: 0.95rem;
   }
 
   .logo-grid {
@@ -158,16 +142,5 @@
     font-size: 0.85rem;
     font-weight: 500;
     color: var(--color-text-muted);
-  }
-
-  .nav-buttons {
-    display: flex;
-    gap: 1rem;
-    margin-top: 0.5rem;
-  }
-
-  .btn-primary:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
   }
 </style>

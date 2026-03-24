@@ -24,7 +24,8 @@ export interface TrademarkSearchResponse {
 // ── 브랜드 추천 ──
 export interface BrandRecommendRequest {
   brand_idea: string
-  brand_category?: string
+  brand_category?: string[]
+  brand_tone?: string[]
   exclude?: string[]
 }
 

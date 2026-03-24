@@ -21,6 +21,8 @@ export const useWizardStore = defineStore('wizard', () => {
   const totalSteps = 5
 
   const idea = ref('')
+  const brandCategory = ref<string[]>([])
+  const brandTone = ref<string[]>([])
   const brandCandidates = ref<BrandCandidate[]>([])
   const selectedBrand = ref<BrandCandidate | null>(null)
   const logoCandidates = ref<LogoCandidate[]>([])
@@ -69,6 +71,8 @@ export const useWizardStore = defineStore('wizard', () => {
   function reset() {
     currentStep.value = 1
     idea.value = ''
+    brandCategory.value = []
+    brandTone.value = []
     brandCandidates.value = []
     selectedBrand.value = null
     logoCandidates.value = []
@@ -82,6 +86,8 @@ export const useWizardStore = defineStore('wizard', () => {
     currentStep,
     totalSteps,
     idea,
+    brandCategory,
+    brandTone,
     brandCandidates,
     selectedBrand,
     logoCandidates,

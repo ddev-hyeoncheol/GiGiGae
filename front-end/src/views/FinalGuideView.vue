@@ -1,6 +1,9 @@
 <script setup lang="ts">
   import { useWizardStore } from '@/stores/wizard'
   import { useRouter } from 'vue-router'
+  import PageHeader from '@/components/PageHeader.vue'
+  import NavButtons from '@/components/NavButtons.vue'
+
   const wizard = useWizardStore()
   const router = useRouter()
 
@@ -18,10 +21,10 @@
 <template>
   <div class="page">
     <main class="content">
-      <div class="header">
-        <h2>배포 가이드</h2>
-        <p class="text-muted">선택하신 정보를 바탕으로 생성된 NHN Cloud 배포 가이드입니다.</p>
-      </div>
+      <PageHeader
+        title="배포 가이드"
+        description="선택하신 정보를 바탕으로 생성된 NHN Cloud 배포 가이드입니다."
+      />
 
       <div class="summary surface">
         <h3>선택 요약</h3>
@@ -62,10 +65,11 @@
         </div>
       </div>
 
-      <div class="nav-buttons">
-        <button class="btn-secondary" @click="handleBack">이전</button>
-        <button class="btn-primary" @click="handleReset">처음으로</button>
-      </div>
+      <NavButtons
+        next-label="처음으로"
+        @next="handleReset"
+        @back="handleBack"
+      />
     </main>
   </div>
 </template>
@@ -84,20 +88,6 @@
     align-items: center;
     padding: 1rem 1rem 2rem;
     gap: 1.5rem;
-  }
-
-  .header {
-    text-align: center;
-  }
-
-  .header h2 {
-    font-size: 1.8rem;
-    font-weight: 700;
-  }
-
-  .header p {
-    margin-top: 0.4rem;
-    font-size: 0.95rem;
   }
 
   .summary,
@@ -149,11 +139,5 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-  }
-
-  .nav-buttons {
-    display: flex;
-    gap: 1rem;
-    margin-top: 0.5rem;
   }
 </style>
