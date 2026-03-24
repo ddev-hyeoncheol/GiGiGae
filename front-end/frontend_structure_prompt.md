@@ -52,6 +52,10 @@ front-end/
 │   ├── composables/
 │   │   └── useDarkMode.ts             # 다크모드 토글 composable
 │   ├── components/
+│   │   ├── AppLogo.vue                # 로고 + 타이포그래피 (클릭 시 홈 이동)
+│   │   ├── ChipSelect.vue             # 칩 다중선택 (v-model + max 제한)
+│   │   ├── NavButtons.vue             # 이전/다음 네비게이션 버튼
+│   │   ├── PageHeader.vue             # 페이지 제목 + 설명
 │   │   ├── StepIndicator.vue          # 세그먼트 바 형태 진행 표시
 │   │   └── DarkModeToggle.vue         # 다크모드 토글 버튼
 │   └── views/
@@ -73,7 +77,7 @@ front-end/
 - Vue 플러그인
 - `@` alias → `src/`
 - 개발 서버 프록시: `/api` → `http://localhost:9000`
-- 포트: 5173 (Vite 기본값)
+- 포트: 5173, `host: '0.0.0.0'` (외부 접근 허용)
 
 ### 2. Vue 앱 진입점 (`main.ts`)
 
@@ -82,8 +86,8 @@ front-end/
 
 ### 3. App.vue
 
-- `<StepIndicator />` (라우트 전환에도 유지됨)
-- `<RouterView />` (Vue Router로 뷰 전환)
+- 3-column grid 헤더: `<AppLogo />` | `<StepIndicator />` | 빈 영역
+- `<main class="app-main">` 스크롤 영역으로 `<RouterView />` 감쌈
 - `<DarkModeToggle />`
 
 ### 4. 라우팅 (`router/index.ts`)
@@ -104,7 +108,7 @@ front-end/
 
 **`types.ts`**: 백엔드 Pydantic 스키마 1:1 미러링
 - `TrademarkMatch`, `TrademarkSearchRequest`, `TrademarkSearchResponse`
-- `BrandRecommendRequest`, `BrandRecommendResult`, `BrandRecommendResponse`
+- `BrandRecommendRequest(brand_idea, brand_category?, brand_tone?, exclude?)`, `BrandRecommendResult`, `BrandRecommendResponse`
 - `DomainRecommendRequest`, `DomainRecommendCandidate`, `DomainRecommendResponse`
 
 **`recommend.ts`**: `recommendBrand()`, `recommendDomain()`
@@ -118,6 +122,8 @@ front-end/
 currentStep: number           // 현재 단계 (1~5)
 totalSteps: 5                 // 상수
 idea: string                  // 브랜드 아이디어 텍스트
+brandCategory: string[]       // 브랜드 카테고리 (최대 2개)
+brandTone: string[]           // 브랜드 톤 (최대 3개)
 brandCandidates: BrandCandidate[]
 selectedBrand: BrandCandidate | null
 logoCandidates: LogoCandidate[]
@@ -149,13 +155,20 @@ nextStep(), prevStep(), goToStep(step), reset()
 
 | View | 상태 | 백엔드 연동 |
 |---|---|---|
-| HomeView (Step 1) | 구현 완료 | 연동 완료 (`recommendBrand` 호출) |
+| HomeView (Step 1) | 구현 완료 | 연동 완료 (`recommendBrand` 호출, 카테고리/톤 옵션 포함) |
 | BrandNameView (Step 2) | 구현 완료 | 연동 완료 (결과 표시 + 선택) |
 | BrandLogoView (Step 3) | 구현 완료 | Mock 데이터 |
 | BrandDomainView (Step 4) | 구현 완료 | 예정 |
 | FinalGuideView (Step 5) | 구현 완료 | 예정 |
 
-### 9. 다크모드
+### 9. 배경 효과 (`style.css`)
+
+- body에 `radial-gradient` 도트 패턴 배경
+- `body::before/after`, `#app::before/after` 4개의 빛 번짐 (blur blob)
+- 10~15초 주기 `@keyframes` 애니메이션으로 이동
+- `overflow: hidden`으로 전체 스크롤 방지, `#app > .app-main`에서 콘텐츠 스크롤
+
+### 10. 다크모드
 
 - `composables/useDarkMode.ts`: `<html>` 태그에 `data-theme` 속성 토글
 - `style.css`: CSS 변수로 라이트/다크 테마 정의

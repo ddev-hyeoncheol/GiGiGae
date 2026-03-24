@@ -51,7 +51,7 @@ back-end/
 
 **`schemas/recommend.py`** - 브랜드/도메인 추천:
 
-- `BrandRecommendRequest(brand_idea, brand_category?, exclude?)` - 브랜드 추천 요청
+- `BrandRecommendRequest(brand_idea, brand_category?, brand_tone?, exclude?)` - 브랜드 추천 요청
 - `BrandRecommendCandidate(brand_name, brand_description, brand_tags)` - LLM 반환용
 - `BrandRecommendLLMResponse(brand_candidates)` - LLM 반환용 응답
 - `BrandRecommendResult(brand_name, brand_description, brand_tags, trademark)` - API 응답용 (추천 + 상표 결과)
@@ -66,6 +66,8 @@ back-end/
 - `TrademarkMatch(name, nice_class, legal_status, application_no, similarity)` - 유사 상표
 - `TrademarkSearchResponse(brand_name, risk, matches)` - 상표 검색 응답
 
+> `brand_category`: `list[str]` — 브랜드 카테고리 (최대 2개). 프론트엔드에서 칩 선택으로 전달.
+> `brand_tone`: `list[str]` — 브랜드 톤 (최대 3개). 프론트엔드에서 칩 선택으로 전달.
 > `exclude`: 재추천 시 이전에 추천된 항목을 제외하기 위한 optional 필드. 프론트엔드에서 누적 전달.
 
 ### 2. 플러그인 (`app/plugins/`)
@@ -109,7 +111,7 @@ OllamaPlugin       # Ollama LLM API 클라이언트, Pydantic Structured Output
 
 ### 7. 유틸리티 (`app/utils/`)
 
-- **prompts.py**: `BRAND_SYSTEM_PROMPT`, `DOMAIN_SYSTEM_PROMPT` 및 `build_brand_user_prompt(brand_idea, brand_category, count, exclude)`, `build_domain_user_prompt(brand_name, count, exclude)` 함수
+- **prompts.py**: `BRAND_SYSTEM_PROMPT`, `DOMAIN_SYSTEM_PROMPT` 및 `build_brand_user_prompt(brand_idea, brand_category, brand_tone, count, exclude)`, `build_domain_user_prompt(brand_name, count, exclude)` 함수
 - **logger.py**: `get_logger()` 공통 Logger 팩토리
 
 ### 8. 의존성 (`requirements.txt`)
