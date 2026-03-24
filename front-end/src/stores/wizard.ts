@@ -1,10 +1,8 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
+import type { BrandRecommendResult } from '@/api/types'
 
-export interface BrandCandidate {
-  name: string
-  risk: 'Low' | 'High'
-}
+export type BrandCandidate = BrandRecommendResult
 
 export interface LogoCandidate {
   id: number

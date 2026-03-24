@@ -7,7 +7,7 @@
   const router = useRouter()
 
   /* TODO: NHN Cloud API 연동 시 교체 */
-  const brandSlug = (wizard.selectedBrand?.name ?? 'brand').toLowerCase()
+  const brandSlug = (wizard.selectedBrand?.brand_name ?? 'brand').toLowerCase()
   const mockDomains: DomainCandidate[] = [
     { domain: `${brandSlug}.com`, available: true, price: '15,000원/년' },
     { domain: `${brandSlug}.co.kr`, available: true, price: '22,000원/년' },
@@ -45,7 +45,7 @@
       <div class="header">
         <h2>도메인 추천</h2>
         <p class="text-muted">
-          <strong>{{ wizard.selectedBrand?.name }}</strong> 에 사용할 도메인을 선택하세요.
+          <strong>{{ wizard.selectedBrand?.brand_name }}</strong> 에 사용할 도메인을 선택하세요.
         </p>
       </div>
 

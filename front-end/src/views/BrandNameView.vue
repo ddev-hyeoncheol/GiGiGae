@@ -6,24 +6,31 @@
   const wizard = useWizardStore()
   const router = useRouter()
 
-  /* TODO: API 연동 시 교체 */
-  const mockCandidates: BrandCandidate[] = [
-    { name: 'EcoPaw', risk: 'Low' },
-    { name: 'GreenTail', risk: 'Low' },
-    { name: 'PetLeaf', risk: 'High' },
-    { name: 'NaturePet', risk: 'Low' },
-    { name: 'PawGreen', risk: 'High' },
-    { name: 'BioTail', risk: 'Low' },
-    { name: 'EarthPaw', risk: 'Low' },
-    { name: 'LeafPet', risk: 'High' },
-  ]
-
+  /* 데이터 없이 직접 접근한 경우 홈으로 리다이렉트 */
   if (wizard.brandCandidates.length === 0) {
-    wizard.brandCandidates = mockCandidates
+    router.replace('/')
   }
 
   function selectBrand(candidate: BrandCandidate) {
     wizard.selectedBrand = candidate
+  }
+
+  function riskLabel(risk: string) {
+    switch (risk) {
+      case 'Low': return 'Low'
+      case 'Middle': return 'Middle'
+      case 'High': return 'High'
+      default: return 'unchecked'
+    }
+  }
+
+  function riskClass(risk: string) {
+    switch (risk) {
+      case 'Low': return 'badge-success'
+      case 'Middle': return 'badge-warning'
+      case 'High': return 'badge-danger'
+      default: return 'badge-muted'
+    }
   }
 
   function handleNext() {
@@ -52,15 +59,21 @@
       <ul class="candidate-list">
         <li
           v-for="candidate in wizard.brandCandidates"
-          :key="candidate.name"
+          :key="candidate.brand_name"
           class="candidate-card surface"
-          :class="{ selected: wizard.selectedBrand?.name === candidate.name }"
+          :class="{ selected: wizard.selectedBrand?.brand_name === candidate.brand_name }"
           @click="selectBrand(candidate)"
         >
-          <span class="brand-name">{{ candidate.name }}</span>
-          <span :class="candidate.risk === 'Low' ? 'badge-success' : 'badge-danger'">
-            {{ candidate.risk }}
-          </span>
+          <div class="card-top">
+            <span class="brand-name">{{ candidate.brand_name }}</span>
+            <span :class="riskClass(candidate.trademark.risk)">
+              {{ riskLabel(candidate.trademark.risk) }}
+            </span>
+          </div>
+          <p class="brand-desc text-muted">{{ candidate.brand_description }}</p>
+          <div class="brand-tags">
+            <span v-for="tag in candidate.brand_tags" :key="tag" class="tag">{{ tag }}</span>
+          </div>
         </li>
       </ul>
 
@@ -107,17 +120,17 @@
 
   .candidate-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 0.75rem;
     width: 100%;
-    max-width: 640px;
+    max-width: 720px;
     list-style: none;
   }
 
   .candidate-card {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    gap: 0.5rem;
     padding: 1rem 1.25rem;
     cursor: pointer;
     transition:
@@ -134,9 +147,53 @@
     box-shadow: 0 0 0 2px var(--color-primary);
   }
 
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
   .brand-name {
     font-weight: 600;
-    font-size: 1rem;
+    font-size: 1.05rem;
+  }
+
+  .brand-desc {
+    font-size: 0.85rem;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .brand-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .tag {
+    font-size: 0.75rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    background-color: var(--color-surface-alt, var(--color-border));
+    color: var(--color-text-muted, var(--color-text));
+  }
+
+  .badge-warning {
+    background-color: #f39c12;
+    color: #fff;
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    font-weight: 600;
+  }
+
+  .badge-muted {
+    background-color: var(--color-border);
+    color: var(--color-text);
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    font-weight: 600;
   }
 
   .nav-buttons {

@@ -33,13 +33,13 @@
           <div class="summary-item">
             <dt>브랜드명</dt>
             <dd>
-              {{ wizard.selectedBrand?.name }}
+              {{ wizard.selectedBrand?.brand_name }}
               <span
                 :class="
-                  wizard.selectedBrand?.risk === 'Low' ? 'badge-success' : 'badge-danger'
+                  wizard.selectedBrand?.trademark.risk === 'Low' ? 'badge-success' : 'badge-danger'
                 "
               >
-                {{ wizard.selectedBrand?.risk }}
+                {{ wizard.selectedBrand?.trademark.risk }}
               </span>
             </dd>
           </div>

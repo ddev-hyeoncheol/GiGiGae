@@ -41,7 +41,7 @@
       <div class="header">
         <h2>로고 후보</h2>
         <p class="text-muted">
-          <strong>{{ wizard.selectedBrand?.name }}</strong> 에 대한 로고 후보입니다.
+          <strong>{{ wizard.selectedBrand?.brand_name }}</strong> 에 대한 로고 후보입니다.
         </p>
       </div>
 

@@ -1,13 +1,31 @@
 <script setup lang="ts">
+  import { ref } from 'vue'
   import { useWizardStore } from '@/stores/wizard'
   import { useRouter } from 'vue-router'
+  import { recommendBrand } from '@/api'
+
   const wizard = useWizardStore()
   const router = useRouter()
 
-  function handleStart() {
-    if (wizard.idea.trim().length > 0) {
+  const loading = ref(false)
+  const error = ref('')
+
+  async function handleStart() {
+    const idea = wizard.idea.trim()
+    if (!idea) return
+
+    loading.value = true
+    error.value = ''
+
+    try {
+      const res = await recommendBrand({ brand_idea: idea })
+      wizard.brandCandidates = res.brand_candidates
       wizard.nextStep()
       router.push('/brand-name')
+    } catch (e) {
+      error.value = e instanceof Error ? e.message : '브랜드 추천 중 오류가 발생했습니다.'
+    } finally {
+      loading.value = false
     }
   }
 </script>
@@ -29,13 +47,18 @@
           placeholder="예: 친환경 반려동물 용품을 판매하는 감성 브랜드"
           maxlength="250"
           rows="4"
+          :disabled="loading"
         />
         <div class="input-footer">
           <span class="char-count text-muted">{{ wizard.idea.length }} / 250</span>
-          <button class="btn-primary" :disabled="!wizard.canGoNext" @click="handleStart">
-            시작하기
+          <button class="btn-primary" :disabled="!wizard.canGoNext || loading" @click="handleStart">
+            <template v-if="loading">
+              <span class="spinner" /> 분석 중...
+            </template>
+            <template v-else>시작하기</template>
           </button>
         </div>
+        <p v-if="error" class="error-msg">{{ error }}</p>
       </div>
     </main>
   </div>
@@ -107,6 +130,10 @@
     border-color: var(--color-primary);
   }
 
+  .idea-input:disabled {
+    opacity: 0.6;
+  }
+
   .input-footer {
     display: flex;
     justify-content: space-between;
@@ -120,5 +147,27 @@
   .btn-primary:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+  }
+
+  .spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    vertical-align: middle;
+    margin-right: 0.4rem;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .error-msg {
+    color: var(--color-danger, #e74c3c);
+    font-size: 0.85rem;
+    margin: 0;
   }
 </style>
