@@ -34,7 +34,6 @@
   <div class="page">
     <main class="content">
       <div class="hero">
-        <h1 class="title">NameCraft</h1>
         <p class="subtitle text-muted">AI 기반 브랜드 론칭 자동화 서비스</p>
       </div>
 
@@ -66,7 +65,7 @@
 
 <style scoped>
   .page {
-    min-height: 100vh;
+    min-height: calc(100vh - 120px);
     display: flex;
     flex-direction: column;
   }
@@ -83,12 +82,6 @@
 
   .hero {
     text-align: center;
-  }
-
-  .title {
-    font-size: 3rem;
-    font-weight: 700;
-    color: var(--color-primary);
   }
 
   .subtitle {

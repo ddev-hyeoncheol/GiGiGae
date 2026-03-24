@@ -34,9 +34,7 @@
 <style scoped>
   .step-indicator {
     width: 100%;
-    max-width: 560px;
-    margin: 0 auto;
-    padding: 1.5rem 1rem;
+    padding: 0.5rem 0;
   }
 
   .step-list {
