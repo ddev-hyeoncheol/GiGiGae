@@ -150,6 +150,10 @@ body::after {
   min-height: 0;
 }
 
+#app > .app-main > * {
+  height: 100%;
+}
+
 /* ===== Utility Classes ===== */
 .surface {
   background-color: var(--color-surface);

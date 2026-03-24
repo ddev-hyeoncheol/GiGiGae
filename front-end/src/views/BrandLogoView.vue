@@ -84,7 +84,7 @@
 
 <style scoped>
   .page {
-    min-height: 100vh;
+    height: 100%;
     display: flex;
     flex-direction: column;
   }
@@ -94,6 +94,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     padding: 1rem 1rem 2rem;
     gap: 1.5rem;
   }
