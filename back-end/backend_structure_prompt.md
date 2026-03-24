@@ -90,7 +90,7 @@ OllamaPlugin       # Ollama LLM API 클라이언트, Pydantic Structured Output
 |---|---|---|---|---|
 | `/api/v1/recommend/brand` | POST | 브랜드명 추천 + 상표 충돌 검색 | 구현 완료 | 연동 완료 |
 | `/api/v1/recommend/domain` | POST | 도메인 후보 추천 | 구현 완료 | 예정 |
-| `/api/v1/trademark/search` | POST | 상표 유사도 검색 | 구현 완료 | 예정 |
+| `/api/v1/trademark/search` | POST | 상표 유사도 검색 | 구현 완료 | 연동 완료 |
 | `/api/v1/guide/deploy` | POST | NHN Cloud 배포 가이드 생성 | 예정 | 예정 |
 
 ### 5. 핵심 설정 (`app/core/`)

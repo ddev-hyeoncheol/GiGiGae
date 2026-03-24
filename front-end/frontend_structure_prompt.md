@@ -52,16 +52,17 @@ front-end/
 │   ├── composables/
 │   │   └── useDarkMode.ts             # 다크모드 토글 composable
 │   ├── components/
-│   │   ├── AppLogo.vue                # 로고 + 타이포그래피 (클릭 시 홈 이동)
+│   │   ├── AppLogo.vue                # 로고 + 타이포그래피 (클릭 시 홈 이동 + 상태 초기화)
 │   │   ├── ChipSelect.vue             # 칩 다중선택 (v-model + max 제한)
+│   │   ├── LoadingOverlay.vue         # 단계별 메시지 로딩 오버레이
 │   │   ├── NavButtons.vue             # 이전/다음 네비게이션 버튼
 │   │   ├── PageHeader.vue             # 페이지 제목 + 설명
-│   │   ├── StepIndicator.vue          # 세그먼트 바 형태 진행 표시
+│   │   ├── StepIndicator.vue          # 세그먼트 바 형태 진행 표시 (스킵 상태 포함)
 │   │   └── DarkModeToggle.vue         # 다크모드 토글 버튼
 │   └── views/
-│       ├── HomeView.vue               # Step 1: 아이디어 입력
+│       ├── HomeView.vue               # Step 1: 아이디어 입력 / 브랜드명 직접 검토 (탭 모드)
 │       ├── BrandNameView.vue          # Step 2: 브랜드명 추천 (6개)
-│       ├── BrandLogoView.vue          # Step 3: 로고 선택 (Mock)
+│       ├── BrandTrademarkView.vue     # Step 3: 상표권 확인 상세
 │       ├── BrandDomainView.vue        # Step 4: 도메인 추천
 │       └── FinalGuideView.vue         # Step 5: 최종 가이드
 └── Dockerfile                         # multi-stage: node build + nginx serve
@@ -96,9 +97,13 @@ front-end/
 |---|---|---|---|
 | `/` | home | HomeView | 1 |
 | `/brand-name` | brand-name | BrandNameView | 2 |
-| `/brand-logo` | brand-logo | BrandLogoView | 3 |
+| `/trademark` | trademark | BrandTrademarkView | 3 |
 | `/brand-domain` | brand-domain | BrandDomainView | 4 |
 | `/final-guide` | final-guide | FinalGuideView | 5 |
+
+> **두 가지 진입 경로:**
+> - 아이디어 모드: Step 1 → 2 → 3 → 4 → 5
+> - 브랜드명 모드: Step 1 → 3 (Step 2 스킵) → 4 → 5
 
 ### 5. API 모듈 (`api/`)
 
@@ -121,13 +126,14 @@ front-end/
 // State
 currentStep: number           // 현재 단계 (1~5)
 totalSteps: 5                 // 상수
+inputMode: 'idea' | 'brand'   // 입력 모드 (아이디어 / 브랜드명 직접)
 idea: string                  // 브랜드 아이디어 텍스트
+directBrandName: string       // 직접 입력한 브랜드명
 brandCategory: string[]       // 브랜드 카테고리 (최대 2개)
 brandTone: string[]           // 브랜드 톤 (최대 3개)
 brandCandidates: BrandCandidate[]
 selectedBrand: BrandCandidate | null
-logoCandidates: LogoCandidate[]
-selectedLogo: LogoCandidate | null
+trademarkResult: TrademarkSearchResponse | null  // 상표권 검색 결과
 domainCandidates: DomainCandidate[]
 selectedDomain: DomainCandidate | null
 finalReport: string
@@ -141,24 +147,26 @@ nextStep(), prevStep(), goToStep(step), reset()
 ```
 
 - **persist 미사용**: 새로고침 시 상태 초기화
-- `LogoCandidate`, `DomainCandidate`는 로컬 인터페이스 (스토어 내 정의)
+- `DomainCandidate`는 로컬 인터페이스 (스토어 내 정의)
+- `canGoNext` — inputMode에 따라 case 1 검증 분기 (idea: 아이디어 길이, brand: 브랜드명 길이)
 
 ### 7. StepIndicator 컴포넌트
 
 - **세그먼트 바** 형태 (원형 아님)
 - Pinia `currentStep` 구독, 라우트 전환에도 유지 (App.vue에 배치)
 - 활성 단계: `flex-grow: 3`으로 확대 + `transition` 애니메이션
-- 완료 단계: success 색상 (초록), 활성 단계: primary 색상, 미완료: gray
-- 라벨: 아이디어 입력 / 브랜드명 추천 / 로고 추천 / 도메인 추천 / 배포 가이드
+- 완료 단계: success 색상 (초록), 활성 단계: primary 색상, 스킵 단계: warning 색상 (노란), 미완료: gray
+- 라벨: 아이디어 입력 / 브랜드명 추천 / 상표권 확인 / 도메인 추천 / 배포 가이드
+- 브랜드명 모드에서 Step 2는 skipped 상태로 표시
 
 ### 8. View 컴포넌트
 
 | View | 상태 | 백엔드 연동 |
 |---|---|---|
-| HomeView (Step 1) | 구현 완료 | 연동 완료 (`recommendBrand` 호출, 카테고리/톤 옵션 포함) |
+| HomeView (Step 1) | 구현 완료 | 연동 완료 (`recommendBrand` + `searchTrademark`, 탭 모드 전환, 카테고리/톤 옵션, 로딩 오버레이) |
 | BrandNameView (Step 2) | 구현 완료 | 연동 완료 (결과 표시 + 선택) |
-| BrandLogoView (Step 3) | 구현 완료 | Mock 데이터 |
-| BrandDomainView (Step 4) | 구현 완료 | 예정 |
+| BrandTrademarkView (Step 3) | 구현 완료 | 연동 완료 (상표 위험도 + 유사 상표 목록) |
+| BrandDomainView (Step 4) | 구현 완료 | Mock 데이터 (NHN Cloud API 연동 예정) |
 | FinalGuideView (Step 5) | 구현 완료 | 예정 |
 
 ### 9. 배경 효과 (`style.css`)
@@ -205,6 +213,7 @@ npm run dev
 
 1. ~~프로젝트 초기화 + 타입/API + 스토어~~ — 완료
 2. ~~레이아웃/공통 컴포넌트~~ — 완료
-3. ~~Step 1 (입력) + Step 2 (브랜드 추천)~~ — 완료 (백엔드 연동 포함)
-4. Step 3 (로고, Mock) + Step 4 (도메인, 백엔드 연동) — 작업 중
-5. Step 5 (가이드) + 마무리 — 예정
+3. ~~Step 1 (입력, 탭 모드) + Step 2 (브랜드 추천)~~ — 완료 (백엔드 연동 포함)
+4. ~~Step 3 (상표권 확인)~~ — 완료 (백엔드 연동 포함)
+5. Step 4 (도메인, NHN Cloud API 연동) — 작업 중
+6. Step 5 (가이드) + 마무리 — 예정
