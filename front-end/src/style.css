@@ -14,6 +14,10 @@
   --color-text-muted: #64748b;
   --color-border: #e2e8f0;
 
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.12);
+  --transition: 0.2s ease;
+
   --radius: 8px;
 }
 
