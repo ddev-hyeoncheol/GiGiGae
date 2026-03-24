@@ -11,3 +11,7 @@ ollama run qwen3.5:9b
 ollama run gemma3:4b
 ollama run qwen3:4b
 ollama run qwen3.5:4b
+
+conda install -c conda-forge nodejs=20
+npm install --save-dev prettier
+pip install black
