@@ -1,3 +1,41 @@
+/* ===== CSS Variables: Light (default) ===== */
+:root {
+  --color-primary: #4f46e5;
+  --color-primary-hover: #4338ca;
+  --color-secondary: #0ea5e9;
+  --color-secondary-hover: #0284c7;
+  --color-accent: #f59e0b;
+  --color-success: #10b981;
+  --color-danger: #ef4444;
+
+  --color-bg: #f8f9fc;
+  --color-surface: #ffffff;
+  --color-text: #1a1a2e;
+  --color-text-muted: #64748b;
+  --color-border: #e2e8f0;
+
+  --radius: 8px;
+}
+
+/* ===== CSS Variables: Dark ===== */
+:root.dark {
+  --color-primary: #818cf8;
+  --color-primary-hover: #6366f1;
+  --color-accent: #fbbf24;
+  --color-success: #34d399;
+  --color-danger: #f87171;
+
+  --color-bg: #0f172a;
+  --color-surface: #1e293b;
+  --color-text: #e2e8f0;
+  --color-text-muted: #94a3b8;
+  --color-border: #334155;
+
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* ===== Reset & Base ===== */
 *,
 *::before,
 *::after {
@@ -15,10 +53,73 @@ body {
     BlinkMacSystemFont,
     system-ui,
     sans-serif;
-  color: #1a1a2e;
-  background-color: #f8f9fc;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  transition:
+    color var(--transition),
+    background-color var(--transition);
 }
 
 #app {
   height: 100%;
+}
+
+/* ===== Utility Classes ===== */
+.surface {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.text-muted {
+  color: var(--color-text-muted);
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.625rem 1.25rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color var(--transition);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.btn-secondary {
+  background-color: var(--color-secondary);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.625rem 1.25rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color var(--transition);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-secondary-hover);
+}
+
+.badge-success {
+  background-color: var(--color-success);
+  color: #ffffff;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-danger {
+  background-color: var(--color-danger);
+  color: #ffffff;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
 }
