@@ -1,7 +1,7 @@
 # Vue Frontend Structure - 작업 지시서
 
 > 생성일: 2026-03-23
-> 프로젝트: GiGiGae (AI 기반 브랜드 론칭 자동화 서비스)
+> 프로젝트: NameCraft (AI 기반 브랜드 론칭 자동화 서비스)
 
 ---
 
@@ -275,7 +275,7 @@ export const useWizardStore = defineStore('wizard', () => {
 ### 6. 레이아웃 컴포넌트
 
 **`AppHeader.vue`**:
-- 상단 고정, 좌측 "GiGiGae", 우측 "처음으로" 버튼 (`store.reset()` 호출)
+- 상단 고정, 좌측 "NameCraft", 우측 "처음으로" 버튼 (`store.reset()` 호출)
 - 배경: white, 하단 border
 
 **`StepIndicator.vue`**:

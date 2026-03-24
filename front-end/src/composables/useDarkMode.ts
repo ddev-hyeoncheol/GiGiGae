@@ -1,6 +1,6 @@
 import { ref, watch } from 'vue'
 
-const STORAGE_KEY = 'gigigae-dark-mode'
+const STORAGE_KEY = 'namecraft-dark-mode'
 
 const isDark = ref<boolean>(localStorage.getItem(STORAGE_KEY) === 'true')
 
