@@ -16,7 +16,15 @@ CREATE TABLE IF NOT EXISTS trademarks (
     name_type VARCHAR(50),
     review_status VARCHAR(50),
     registration_no VARCHAR(50),
-    registration_date DATE
+    registration_date DATE,
+
+    -- 추가: 상표 출원 분석 강화
+    applicant VARCHAR(500),               -- 출원인
+    final_right_holder VARCHAR(500),       -- 최종권리자
+    publication_no VARCHAR(50),            -- 출원공고번호
+    publication_date DATE,                 -- 출원공고일자
+    design_code VARCHAR(200),             -- 도형코드 (도형상표 유사도 분석용)
+    image_path VARCHAR(500)               -- 대표견본 이미지 경로
 );
 
 -- 검색 성능 인덱스
