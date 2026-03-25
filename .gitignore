@@ -372,4 +372,7 @@ yarn-error.log
 
 .env
 db/data/
+db/data_bak/
 db/pgdata/
+image/
+model/
