@@ -38,6 +38,22 @@ export const useWizardStore = defineStore('wizard', () => {
   const selectedDomain = ref<DomainCandidate | null>(null)
   const finalReport = ref('')
 
+  // 글로벌 로딩 상태
+  const loading = ref(false)
+  const loadingMessages = ref<string[]>([])
+  const loadingInterval = ref(3000)
+
+  function startLoading(messages: string[], interval = 3000) {
+    loadingMessages.value = messages
+    loadingInterval.value = interval
+    loading.value = true
+  }
+
+  function stopLoading() {
+    loading.value = false
+    loadingMessages.value = []
+  }
+
   const canGoNext = computed(() => {
     switch (currentStep.value) {
       case 1:
@@ -110,11 +126,16 @@ export const useWizardStore = defineStore('wizard', () => {
     domainCandidates,
     selectedDomain,
     finalReport,
+    loading,
+    loadingMessages,
+    loadingInterval,
     canGoNext,
     canGoBack,
     nextStep,
     prevStep,
     goToStep,
     reset,
+    startLoading,
+    stopLoading,
   }
 })
