@@ -21,6 +21,20 @@ export interface TrademarkSearchResponse {
   matches: TrademarkMatch[]
 }
 
+// ── 이미지 기반 상표 검색 ──
+export interface ImageSearchMatch {
+  name: string
+  nice_class: string | null
+  legal_status: string | null
+  application_no: string
+  similarity: number
+  image_path: string | null
+}
+
+export interface ImageSearchResponse {
+  matches: ImageSearchMatch[]
+}
+
 // ── 브랜드 추천 ──
 export interface BrandRecommendRequest {
   brand_idea: string

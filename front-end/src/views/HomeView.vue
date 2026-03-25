@@ -2,7 +2,7 @@
   import { ref } from 'vue'
   import { useWizardStore } from '@/stores/wizard'
   import { useRouter } from 'vue-router'
-  import { recommendBrand, searchTrademark } from '@/api'
+  import { recommendBrand, searchTrademark, searchTrademarkByImage } from '@/api'
   import ChipSelect from '@/components/ChipSelect.vue'
   import type { ChipOption } from '@/components/ChipSelect.vue'
 
@@ -27,6 +27,35 @@
   ]
   const showOptions = ref(false)
   const showBrandOptions = ref(false)
+  const logoFile = ref<File | null>(null)
+  const logoPreview = ref<string | null>(null)
+
+  function handleLogoUpload(e: Event) {
+    const input = e.target as HTMLInputElement
+    const file = input.files?.[0]
+    if (!file) return
+    logoFile.value = file
+    logoPreview.value = URL.createObjectURL(file)
+  }
+
+  function removeLogo() {
+    logoFile.value = null
+    if (logoPreview.value) {
+      URL.revokeObjectURL(logoPreview.value)
+      logoPreview.value = null
+    }
+  }
+
+  const dragging = ref(false)
+
+  function handleDrop(e: DragEvent) {
+    dragging.value = false
+    const file = e.dataTransfer?.files?.[0]
+    if (file && file.type.startsWith('image/')) {
+      logoFile.value = file
+      logoPreview.value = URL.createObjectURL(file)
+    }
+  }
   const customCategory = ref(false)
   const customCategoryText = ref('')
 
@@ -90,13 +119,18 @@
         const brandName = wizard.directBrandName.trim()
         if (!brandName) return
 
-        const res = await searchTrademark({ brand_name: brandName })
-        wizard.trademarkResult = res
+        const [trademarkRes, imageRes] = await Promise.all([
+          searchTrademark({ brand_name: brandName }),
+          logoFile.value ? searchTrademarkByImage(logoFile.value) : Promise.resolve(null),
+        ])
+
+        wizard.trademarkResult = trademarkRes
+        wizard.imageSearchResult = imageRes
         wizard.selectedBrand = {
           brand_name: brandName,
           brand_description: '',
           brand_tags: [],
-          trademark: res,
+          trademark: trademarkRes,
         }
         wizard.goToStep(3)
         router.push('/trademark')
@@ -193,7 +227,7 @@
 
         <!-- 브랜드명 모드 -->
         <template v-else>
-          <label for="brand-name" class="input-label">브랜드명</label>
+          <label for="brand-name" class="input-label">브랜드명 <span class="option-hint">(필수)</span></label>
           <input
             id="brand-name"
             v-model="wizard.directBrandName"
@@ -202,6 +236,29 @@
             placeholder="검토할 브랜드명을 입력하세요"
             @keyup.enter="handleStart"
           />
+
+          <label class="input-label">로고 이미지 <span class="option-hint">(선택)</span></label>
+          <div class="logo-upload">
+            <template v-if="logoPreview">
+              <div class="logo-preview">
+                <img :src="logoPreview" alt="로고 미리보기" />
+                <button class="logo-remove" @click="removeLogo">&times;</button>
+              </div>
+            </template>
+            <label
+              v-else
+              class="logo-dropzone"
+              :class="{ 'logo-dragging': dragging }"
+              @dragenter.prevent="dragging = true"
+              @dragover.prevent="dragging = true"
+              @dragleave.prevent="dragging = false"
+              @drop.prevent="handleDrop"
+            >
+              <span class="logo-dropzone-icon">+</span>
+              <span class="logo-dropzone-text">로고 이미지를 업로드하면<br/>시각적으로 유사한 상표들을 함께 검색해요.</span>
+              <input type="file" accept="image/*" hidden @change="handleLogoUpload" />
+            </label>
+          </div>
           <Transition name="slide">
             <div v-if="showBrandOptions" class="options-panel">
               <hr class="divider" />
@@ -517,6 +574,74 @@
 
   @keyframes spin {
     to { transform: rotate(360deg); }
+  }
+
+  .logo-upload {
+    width: 100%;
+  }
+
+  .logo-dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1.5rem;
+    border: 2px dashed var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-bg);
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+  }
+
+  .logo-dropzone:hover,
+  .logo-dropzone.logo-dragging {
+    border-color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 5%, transparent);
+  }
+
+  .logo-dropzone-icon {
+    font-size: 1.8rem;
+    color: var(--color-text-muted);
+    line-height: 1;
+  }
+
+  .logo-dropzone-text {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    text-align: center;
+    line-height: 1.5;
+  }
+
+  .logo-preview {
+    position: relative;
+    display: inline-block;
+  }
+
+  .logo-preview img {
+    max-width: 100%;
+    max-height: 120px;
+    border-radius: var(--radius);
+    border: 1px solid var(--color-border);
+    object-fit: contain;
+  }
+
+  .logo-remove {
+    position: absolute;
+    top: -0.4rem;
+    right: -0.4rem;
+    width: 1.4rem;
+    height: 1.4rem;
+    border: none;
+    border-radius: 50%;
+    background: var(--color-danger, #e74c3c);
+    color: #fff;
+    font-size: 0.9rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .error-msg {

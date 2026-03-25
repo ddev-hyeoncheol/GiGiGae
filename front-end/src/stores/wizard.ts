@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import type { BrandRecommendResult, TrademarkSearchResponse } from '@/api/types'
+import type { BrandRecommendResult, ImageSearchResponse, TrademarkSearchResponse } from '@/api/types'
 
 export type BrandCandidate = BrandRecommendResult
 
@@ -32,6 +32,7 @@ export const useWizardStore = defineStore('wizard', () => {
   const brandCandidates = ref<BrandCandidate[]>([])
   const selectedBrand = ref<BrandCandidate | null>(null)
   const trademarkResult = ref<TrademarkSearchResponse | null>(null)
+  const imageSearchResult = ref<ImageSearchResponse | null>(null)
   const logoCandidates = ref<LogoCandidate[]>([])
   const selectedLogo = ref<LogoCandidate | null>(null)
   const domainCandidates = ref<DomainCandidate[]>([])
@@ -103,6 +104,7 @@ export const useWizardStore = defineStore('wizard', () => {
     brandCandidates.value = []
     selectedBrand.value = null
     trademarkResult.value = null
+    imageSearchResult.value = null
     logoCandidates.value = []
     selectedLogo.value = null
     domainCandidates.value = []
@@ -121,6 +123,7 @@ export const useWizardStore = defineStore('wizard', () => {
     brandCandidates,
     selectedBrand,
     trademarkResult,
+    imageSearchResult,
     logoCandidates,
     selectedLogo,
     domainCandidates,
