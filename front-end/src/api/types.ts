@@ -7,6 +7,7 @@ export interface TrademarkMatch {
   legal_status: string | null
   application_no: string
   similarity: number
+  image_path: string | null
 }
 
 export interface TrademarkSearchRequest {

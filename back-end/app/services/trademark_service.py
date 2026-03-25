@@ -14,7 +14,7 @@ from app.utils.logger import get_logger
 logger = get_logger(__name__)
 
 SEARCH_SQL = """
-    SELECT name, nice_class, legal_status, application_no,
+    SELECT name, nice_class, legal_status, application_no, image_path,
            similarity(name, $1) AS score
     FROM trademarks
     WHERE similarity(name, $1) > $2
@@ -33,7 +33,7 @@ IMAGE_SEARCH_SQL = """
 """
 
 SEARCH_WITH_CLASS_SQL = """
-    SELECT name, nice_class, legal_status, application_no,
+    SELECT name, nice_class, legal_status, application_no, image_path,
            similarity(name, $1) AS score
     FROM trademarks
     WHERE similarity(name, $1) > $2
@@ -82,6 +82,7 @@ class TrademarkService:
                         legal_status=row["legal_status"],
                         application_no=row["application_no"],
                         similarity=round(float(row["score"]), 4),
+                        image_path=row["image_path"],
                     )
                     for row in rows
                 ]

@@ -19,6 +19,7 @@ class TrademarkMatch(BaseModel):
     legal_status: str | None = Field(None, description="법적상태")
     application_no: str = Field(..., description="출원번호")
     similarity: float = Field(..., description="유사도 점수 (0~1)")
+    image_path: str | None = Field(None, description="상표 이미지 경로")
 
 
 class TrademarkSearchResponse(BaseModel):
