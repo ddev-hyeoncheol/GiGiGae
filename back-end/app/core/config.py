@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     debug: bool = True
 
     ollama_base_url: str = "http://localhost:11434"
-    ollama_model: str = "gemma3:12b"
+    ollama_model: str = "gemma3:4b"
     ollama_timeout: int = 120
 
     nhn_domain_api_url: str = "https://domain.nhn.com/regist/requestDomainSearch.gd"
