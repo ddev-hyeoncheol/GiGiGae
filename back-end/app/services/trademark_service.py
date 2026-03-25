@@ -65,12 +65,14 @@ class TrademarkService:
 
         try:
             async with self._pool.acquire() as conn:
+                rows = []
                 if nice_classes:
                     patterns = [f"%{cls}%" for cls in nice_classes]
                     rows = await conn.fetch(
                         SEARCH_WITH_CLASS_SQL, brand_name, threshold, patterns
                     )
-                else:
+                # 폴백: 니스 필터 결과가 없으면 전체 검색
+                if not rows:
                     rows = await conn.fetch(SEARCH_SQL, brand_name, threshold)
 
                 matches = [
