@@ -26,6 +26,7 @@ export interface BrandRecommendRequest {
   brand_idea: string
   brand_category?: string[]
   brand_tone?: string[]
+  count?: number
   exclude?: string[]
 }
 

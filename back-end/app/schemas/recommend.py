@@ -11,6 +11,7 @@ class BrandRecommendRequest(BaseModel):
     )
     brand_category: list[str] = Field(default=[], description="브랜드 카테고리")
     brand_tone: list[str] = Field(default=[], description="브랜드 톤 (예: 트렌디한, 모던한)")
+    count: int | None = Field(default=None, ge=1, le=10, description="추천 개수 (미입력 시 서버 기본값)")
     exclude: list[str] = Field(
         default=[], description="제외할 브랜드명 목록 (재추천 시)"
     )

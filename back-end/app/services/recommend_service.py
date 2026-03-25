@@ -44,11 +44,13 @@ class RecommendService:
             f"exclude={request.exclude}"
         )
 
+        count = request.count if request.count is not None else BRAND_CANDIDATE_COUNT
+
         user_prompt = build_brand_user_prompt(
             brand_idea=request.brand_idea,
             brand_category=request.brand_category or None,
             brand_tone=request.brand_tone or None,
-            count=BRAND_CANDIDATE_COUNT,
+            count=count,
             exclude=request.exclude or None,
         )
         llm_result: BrandRecommendLLMResponse = await self._llm.generate(
