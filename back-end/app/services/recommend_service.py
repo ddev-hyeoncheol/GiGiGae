@@ -1,6 +1,29 @@
 """브랜드/도메인 추천 비즈니스 로직"""
 
 from app.core.constants import BRAND_CANDIDATE_COUNT
+
+# 카테고리 → 니스 분류 코드 매핑
+CATEGORY_NICE_MAP: dict[str, list[str]] = {
+    "이커머스 · 온라인스토어": ["35", "42"],
+    "F&B · 카페 · 숙박": ["29", "30", "32", "43"],
+    "IT · SaaS · 테크": ["9", "42"],
+    "패션 · 의류 브랜드": ["18", "25", "26"],
+    "뷰티 · 코스메틱": ["3", "44"],
+    "디지털 · 전자제품": ["11", "28"],
+    "카페 · 베이커리 · 식품": ["29", "30", "31", "32"],
+}
+
+
+def resolve_nice_classes(categories: list[str] | None) -> list[str] | None:
+    """카테고리 목록 → 중복 제거된 니스 분류 코드 리스트"""
+    if not categories:
+        return None
+    codes: set[str] = set()
+    for cat in categories:
+        codes.update(CATEGORY_NICE_MAP.get(cat, []))
+    return list(codes) if codes else None
+
+
 from app.plugins.ollama_plugin import OllamaPlugin
 from app.schemas.recommend import (
     BrandRecommendLLMResponse,
@@ -59,10 +82,13 @@ class RecommendService:
             schema=BrandRecommendLLMResponse,
         )
 
+        nice_classes = resolve_nice_classes(request.brand_category or None)
+
         brand_candidates = []
         for candidate in llm_result.brand_candidates:
             trademark_result = await self._trademark.search(
-                brand_name=candidate.brand_name
+                brand_name=candidate.brand_name,
+                nice_classes=nice_classes,
             )
             brand_candidates.append(
                 BrandRecommendResult(

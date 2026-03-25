@@ -62,6 +62,24 @@
   const MAX_CATEGORY = 2
   const MAX_TONE = 3
 
+  const categoryNiceMap: Record<string, string[]> = {
+    '이커머스 · 온라인스토어': ['35', '42'],
+    'F&B · 카페 · 숙박': ['29', '30', '32', '43'],
+    'IT · SaaS · 테크': ['9', '42'],
+    '패션 · 의류 브랜드': ['18', '25', '26'],
+    '뷰티 · 코스메틱': ['3', '44'],
+    '디지털 · 전자제품': ['11', '28'],
+    '카페 · 베이커리 · 식품': ['29', '30', '31', '32'],
+  }
+
+  function resolveNiceClasses(): string[] {
+    const codes = new Set<string>()
+    for (const cat of wizard.brandCategory) {
+      for (const code of (categoryNiceMap[cat] ?? [])) codes.add(code)
+    }
+    return [...codes]
+  }
+
   const categories: ChipOption[] = [
     { emoji: '🛒', label: '이커머스 · 온라인스토어' },
     { emoji: '🍽️', label: 'F&B · 카페 · 숙박' },
@@ -120,7 +138,10 @@
         if (!brandName) return
 
         const [trademarkRes, imageRes] = await Promise.all([
-          searchTrademark({ brand_name: brandName }),
+          searchTrademark({
+            brand_name: brandName,
+            nice_classes: resolveNiceClasses(),
+          }),
           logoFile.value ? searchTrademarkByImage(logoFile.value) : Promise.resolve(null),
         ])
 
