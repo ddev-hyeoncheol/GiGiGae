@@ -34,13 +34,6 @@
     }
   }
 
-  const hasTextSearch = computed(() => {
-    const r = result
-    if (!r) return false
-    if (r.risk === 'unchecked' && r.matches.length === 0) return false
-    return true
-  })
-
   function riskTitle(risk: string) {
     switch (risk) {
       case 'Low': return '충돌 가능성이 낮은 상표예요'
