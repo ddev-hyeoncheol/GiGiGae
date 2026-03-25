@@ -92,7 +92,7 @@
 
         <NavButtons
           back-label="이전으로"
-          next-label="도메인 추천하기"
+          next-label="도메인 조회하기"
           :next-disabled="false"
           @next="handleNext"
           @back="handleBack"
