@@ -21,8 +21,8 @@
         class="step-item"
         :class="{
           active: wizard.currentStep === step.number,
-          completed: wizard.currentStep > step.number && !(wizard.inputMode === 'brand' && step.number === 2),
-          skipped: wizard.currentStep > step.number && wizard.inputMode === 'brand' && step.number === 2,
+          completed: wizard.currentStep > step.number,
+          hidden: wizard.inputMode === 'brand' && step.number === 2,
         }"
       >
         <div class="step-bar" />
@@ -50,11 +50,21 @@
     flex-direction: column;
     align-items: center;
     gap: 0.5rem;
-    transition: flex-grow 0.4s ease;
+    overflow: hidden;
+    transition:
+      flex 0.4s ease,
+      opacity 0.4s ease,
+      gap 0.4s ease;
   }
 
   .step-item.active {
     flex-grow: 3;
+  }
+
+  .step-item.hidden {
+    flex: 0;
+    opacity: 0;
+    gap: 0;
   }
 
   .step-bar {
@@ -74,7 +84,14 @@
   .step-label {
     font-size: 0.75rem;
     color: var(--color-text-muted);
-    transition: color 0.3s ease;
+    white-space: nowrap;
+    transition:
+      color 0.3s ease,
+      opacity 0.3s ease;
+  }
+
+  .step-item.hidden .step-label {
+    opacity: 0;
   }
 
   /* Active */
@@ -94,14 +111,5 @@
 
   .step-item.completed .step-label {
     color: var(--color-success);
-  }
-
-  /* Skipped */
-  .step-item.skipped .step-bar {
-    background-color: var(--color-warning, #f59e0b);
-  }
-
-  .step-item.skipped .step-label {
-    color: var(--color-warning, #f59e0b);
   }
 </style>
