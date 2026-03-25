@@ -28,32 +28,36 @@
   const showOptions = ref(false)
   const showBrandOptions = ref(false)
   const logoFile = ref<File | null>(null)
-  const logoPreview = ref<string | null>(null)
 
-  function handleLogoUpload(e: Event) {
+  function fileToBase64(file: File): Promise<string> {
+    return new Promise((resolve) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve(reader.result as string)
+      reader.readAsDataURL(file)
+    })
+  }
+
+  async function handleLogoUpload(e: Event) {
     const input = e.target as HTMLInputElement
     const file = input.files?.[0]
     if (!file) return
     logoFile.value = file
-    logoPreview.value = URL.createObjectURL(file)
+    wizard.logoPreview = await fileToBase64(file)
   }
 
   function removeLogo() {
     logoFile.value = null
-    if (logoPreview.value) {
-      URL.revokeObjectURL(logoPreview.value)
-      logoPreview.value = null
-    }
+    wizard.logoPreview = null
   }
 
   const dragging = ref(false)
 
-  function handleDrop(e: DragEvent) {
+  async function handleDrop(e: DragEvent) {
     dragging.value = false
     const file = e.dataTransfer?.files?.[0]
     if (file && file.type.startsWith('image/')) {
       logoFile.value = file
-      logoPreview.value = URL.createObjectURL(file)
+      wizard.logoPreview = await fileToBase64(file)
     }
   }
   const customCategory = ref(false)
@@ -138,10 +142,7 @@
         if (!brandName) return
 
         const [trademarkRes, imageRes] = await Promise.all([
-          searchTrademark({
-            brand_name: brandName,
-            nice_classes: resolveNiceClasses(),
-          }),
+          searchTrademark({ brand_name: brandName, nice_classes: resolveNiceClasses() }),
           logoFile.value ? searchTrademarkByImage(logoFile.value) : Promise.resolve(null),
         ])
 
@@ -260,9 +261,9 @@
 
           <label class="input-label">로고 이미지 <span class="option-hint">(선택)</span></label>
           <div class="logo-upload">
-            <template v-if="logoPreview">
+            <template v-if="wizard.logoPreview">
               <div class="logo-preview">
-                <img :src="logoPreview" alt="로고 미리보기" />
+                <img :src="wizard.logoPreview" alt="로고 미리보기" />
                 <button class="logo-remove" @click="removeLogo">&times;</button>
               </div>
             </template>
@@ -655,7 +656,7 @@
     height: 1.4rem;
     border: none;
     border-radius: 50%;
-    background: var(--color-danger, #e74c3c);
+    background: var(--color-danger);
     color: #fff;
     font-size: 0.9rem;
     line-height: 1;
@@ -666,7 +667,7 @@
   }
 
   .error-msg {
-    color: var(--color-danger, #e74c3c);
+    color: var(--color-danger);
     font-size: 0.85rem;
     margin: 0;
   }
