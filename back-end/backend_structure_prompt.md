@@ -1,7 +1,7 @@
 # FastAPI Backend Structure - 작업 지시서
 
 > 생성일: 2026-03-20
-> 최종 수정: 2026-03-25
+> 최종 수정: 2026-03-26
 > 프로젝트: GiGiGae (AI 기반 브랜드 론칭 자동화 서비스)
 
 ---
@@ -73,9 +73,9 @@ back-end/
 **`schemas/trademark.py`** - 상표 검색:
 
 - `TrademarkSearchRequest(brand_name, nice_classes?, threshold?)` - 텍스트 상표 검색 요청
-- `TrademarkMatch(name, nice_class, legal_status, application_no, similarity)` - 유사 상표
+- `TrademarkMatch(name, nice_class, legal_status, application_no, similarity, image_path?)` - 유사 상표 (image_path 포함)
 - `TrademarkSearchResponse(brand_name, risk, matches)` - 상표 검색 응답
-- `ImageSearchMatch(name, nice_class, legal_status, application_no, similarity, image_path)` - 이미지 유사 상표
+- `ImageSearchMatch(name, nice_class, legal_status, application_no, similarity, image_path?)` - 이미지 유사 상표
 - `ImageSearchResponse(matches)` - 이미지 검색 응답
 
 > `count`: `int | None` — 추천 개수 (기본 6개, 최대 10개)
@@ -92,13 +92,13 @@ NhnDomainPlugin        # NHN Cloud 도메인 가용성 확인 클라이언트
 ```
 
 - **OllamaPlugin**: `generate(prompt, system_prompt, schema)` 메서드로 Pydantic 스키마 기반 Structured Output 반환. `httpx.Timeout` 적용, `LLMTimeoutError`/`LLMGenerationError` 에러 핸들링
-- **ClipPlugin**: 싱글톤. `embed_image(PIL.Image)` → 512차원 정규화 벡터. 볼륨 마운트(`/data/model/ViT-B-32.pt`) 우선 로드, 없으면 자동 다운로드
+- **ClipPlugin**: 싱글톤. `embed_image(PIL.Image)` → 512차원 정규화 벡터. 볼륨 마운트(`/data/model/ViT-B-32.pt`) 우선 로드, 없으면 자동 다운로드. `ClipPlugin.get()` 클래스 메서드로 인스턴스 취득
 - **NhnDomainPlugin**: `check_availability(domain_name)` 메서드로 NHN API POST 호출. `ExternalAPIError` 에러 핸들링
 
 ### 3. 서비스 (`app/services/`) - 비즈니스 로직
 
-- **`recommend_service.py`**: `OllamaPlugin` + `TrademarkService`를 조합하여 브랜드 추천 + 상표 충돌 검색 수행. 카테고리 → 니스 분류 매핑(`CATEGORY_NICE_MAP`)으로 업종별 상표 검색
-- **`trademark_service.py`**: pg_trgm 텍스트 유사도 + pgvector 이미지 유사도 검색. 위험도 판별 (Low / Middle / High). 니스 필터 결과 0건 시 전체 검색 폴백
+- **`recommend_service.py`**: `OllamaPlugin` + `TrademarkService`를 조합하여 브랜드 추천 + 상표 충돌 검색 수행. 카테고리 → 니스 분류 매핑(`CATEGORY_NICE_MAP`)으로 업종별 상표 검색. `resolve_nice_classes()` 유틸 함수 포함
+- **`trademark_service.py`**: pg_trgm 텍스트 유사도 + pgvector 이미지 유사도 검색. 위험도 판별 (Low / Middle / High). 니스 필터 결과 0건 시 전체 검색 폴백. 텍스트 검색 결과에 `image_path` 포함
 - **`domain_service.py`**: `NhnDomainPlugin`을 사용하여 도메인 가용성 확인
 
 ### 4. API 라우터 (`app/api/`)
@@ -110,14 +110,14 @@ NhnDomainPlugin        # NHN Cloud 도메인 가용성 확인 클라이언트
 | `/api/v1/trademark/search` | POST | 텍스트 상표 유사도 검색 | 구현 완료 |
 | `/api/v1/trademark/image-search` | POST | CLIP 이미지 유사 상표 검색 (multipart) | 구현 완료 |
 | `/api/v1/domain/check` | POST | NHN Cloud 도메인 가용성 확인 | 구현 완료 |
-| `/api/v1/guide/deploy` | POST | NHN Cloud 배포 가이드 생성 | 예정 |
+| `/health` | GET | 헬스 체크 | 구현 완료 |
 
 ### 5. 핵심 설정 (`app/core/`)
 
-- **config.py**: `pydantic-settings`로 `.env` 로드. Ollama 모델명/URL/Timeout, NHN Domain API URL/Timeout, DATABASE_URL 관리
-- **constants.py**: `API_V1_PREFIX`, `BRAND_CANDIDATE_COUNT`(6) 상수 정의
-- **database.py**: asyncpg 커넥션 풀 생성/종료/조회. DI로 서비스에 주입
-- **exceptions.py**: `AppException` 기본 클래스 + `LLMTimeoutError`, `LLMGenerationError`, `ExternalAPIError` 정의
+- **config.py**: `pydantic-settings`로 `.env` 로드. `app_name`, `debug`, `ollama_base_url`, `ollama_model`(기본 `gemma3:4b`), `ollama_timeout`, `nhn_domain_api_url`, `nhn_domain_timeout`, `database_url`, `cors_origins` 관리
+- **constants.py**: `API_V1_PREFIX`(`/api/v1`), `BRAND_CANDIDATE_COUNT`(6) 상수 정의
+- **database.py**: asyncpg 커넥션 풀 생성(`init_pool`)/종료(`close_pool`)/조회(`get_pool`). DI로 서비스에 주입
+- **exceptions.py**: `AppException` 기본 클래스 + `LLMTimeoutError`, `LLMGenerationError`, `ExternalAPIError` 정의. `app_exception_handler`로 규격화된 JSON 에러 응답 반환
 
 ### 6. FastAPI 진입점 (`app/main.py`)
 
@@ -125,13 +125,14 @@ NhnDomainPlugin        # NHN Cloud 도메인 가용성 확인 클라이언트
 - CORS 미들웨어 설정
 - API 라우터 include (`prefix="/api/v1"`)
 - 정적 파일 서빙: `/image` → `/data/image` (상표 이미지)
-- 전역 예외 핸들러 등록
+- 전역 예외 핸들러 등록 (`app_exception_handler`)
 - lifespan 이벤트로 `OllamaPlugin`, `NhnDomainPlugin` 초기화, DB 커넥션 풀 생성/종료
+- `app_state` dict로 플러그인 인스턴스 관리 (DI 패턴)
 - `/health` Health check 엔드포인트
 
 ### 7. 유틸리티 (`app/utils/`)
 
-- **prompts.py**: `BRAND_SYSTEM_PROMPT`, `DOMAIN_SYSTEM_PROMPT` 및 `build_brand_user_prompt(brand_idea, brand_category, brand_tone, count, exclude)`, `build_domain_user_prompt(brand_name, count=10, exclude)` 함수
+- **prompts.py**: `BRAND_SYSTEM_PROMPT`(브랜드 네이밍 전문가 프롬프트, 보통명사 사용 최소화·슬로건 명사형·태그 2~3개 지시), `DOMAIN_SYSTEM_PROMPT` 및 `build_brand_user_prompt(brand_idea, brand_category, brand_tone, count, exclude)`, `build_domain_user_prompt(brand_name, count=10, exclude)` 함수
 - **logger.py**: `get_logger()` 공통 Logger 팩토리
 
 ### 8. 의존성 (`requirements.txt`)
