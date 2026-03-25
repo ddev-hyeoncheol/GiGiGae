@@ -7,8 +7,8 @@
     { number: 1, label: '아이디어 입력' },
     { number: 2, label: '브랜드명 추천' },
     { number: 3, label: '상표권 확인' },
-    { number: 4, label: '도메인 추천' },
-    { number: 5, label: '배포 가이드' },
+    { number: 4, label: '도메인 조회' },
+    { number: 5, label: '가이드 확인' },
   ]
 </script>
 
