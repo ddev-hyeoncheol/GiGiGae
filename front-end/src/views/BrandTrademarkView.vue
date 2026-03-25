@@ -140,6 +140,39 @@
           <div v-else class="no-matches surface">
             <p class="text-muted">유사한 등록 상표가 발견되지 않았습니다.</p>
           </div>
+
+          <!-- 이미지 기반 유사 상표 -->
+          <div v-if="wizard.imageSearchResult?.matches?.length" class="matches-section surface">
+            <h3 class="matches-title">시각적 유사 상표 <span class="text-muted">({{ wizard.imageSearchResult.matches.length }}건)</span></h3>
+            <p class="image-search-desc text-muted">업로드한 로고와 시각적으로 유사한 등록 상표입니다.</p>
+            <div class="image-matches-grid">
+              <div
+                v-for="match in wizard.imageSearchResult.matches"
+                :key="match.application_no"
+                class="image-match-card"
+              >
+                <div class="image-match-thumb">
+                  <img
+                    v-if="match.image_path"
+                    :src="match.image_path"
+                    :alt="match.name"
+                  />
+                  <div v-else class="image-match-placeholder">No Image</div>
+                </div>
+                <div class="image-match-info">
+                  <span class="image-match-name">{{ match.name }}</span>
+                  <span class="image-match-similarity">{{ similarityPercent(match.similarity) }}%</span>
+                </div>
+                <div class="match-categories">
+                  <span
+                    v-for="cat in resolveCategories(match.nice_class)"
+                    :key="cat.label"
+                    class="category-tag"
+                  >{{ cat.label }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <NavButtons
@@ -305,5 +338,77 @@
   .no-matches {
     padding: 2rem;
     text-align: center;
+  }
+
+  .image-search-desc {
+    font-size: 0.85rem;
+    margin: -0.25rem 0 0.5rem;
+  }
+
+  .image-matches-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .image-match-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 0.6rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-bg);
+    transition: border-color 0.2s ease;
+  }
+
+  .image-match-card:hover {
+    border-color: var(--color-primary);
+  }
+
+  .image-match-thumb {
+    width: 100%;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: calc(var(--radius) - 2px);
+    background: #f9f9f9;
+  }
+
+  .image-match-thumb img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  .image-match-placeholder {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+  }
+
+  .image-match-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .image-match-name {
+    font-weight: 600;
+    font-size: 0.8rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .image-match-similarity {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    flex-shrink: 0;
+    margin-left: 0.3rem;
   }
 </style>
