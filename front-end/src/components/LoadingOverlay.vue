@@ -69,7 +69,6 @@ onUnmounted(stopCycle)
   justify-content: center;
   background: color-mix(in srgb, var(--color-bg) 85%, transparent);
   backdrop-filter: blur(4px);
-  border-radius: var(--radius);
 }
 
 .overlay-content {

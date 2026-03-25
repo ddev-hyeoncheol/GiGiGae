@@ -3,6 +3,10 @@
   import AppLogo from '@/components/AppLogo.vue'
   import DarkModeToggle from '@/components/DarkModeToggle.vue'
   import StepIndicator from '@/components/StepIndicator.vue'
+  import LoadingOverlay from '@/components/LoadingOverlay.vue'
+  import { useWizardStore } from '@/stores/wizard'
+
+  const wizard = useWizardStore()
 </script>
 
 <template>
@@ -13,13 +17,20 @@
     <StepIndicator />
     <div class="app-header-side" />
   </header>
-  <main class="app-main">
-    <RouterView v-slot="{ Component }">
-      <Transition name="page" mode="out-in">
-        <component :is="Component" />
-      </Transition>
-    </RouterView>
-  </main>
+  <div class="app-body">
+    <main class="app-main">
+      <RouterView v-slot="{ Component }">
+        <Transition name="page" mode="out-in">
+          <component :is="Component" />
+        </Transition>
+      </RouterView>
+    </main>
+    <LoadingOverlay
+      :visible="wizard.loading"
+      :messages="wizard.loadingMessages"
+      :interval="wizard.loadingInterval"
+    />
+  </div>
   <DarkModeToggle />
 </template>
 
@@ -40,6 +51,20 @@
 
   .app-header-side:last-child {
     justify-content: flex-end;
+  }
+
+  .app-body {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .app-main {
+    height: 100%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
   }
 
   .page-enter-active,
