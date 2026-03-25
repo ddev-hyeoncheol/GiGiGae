@@ -38,14 +38,17 @@ services:
       - ./image:/data/image:ro
     restart: unless-stopped
 
-  # front-end:
-  #   container_name: front-end
-  #   hostname: front-end
-  #   build:
-  #     context: ./front-end
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "3000:3000"
-  #   depends_on:
-  #     - back-end
+  front-end:
+    container_name: front-end
+    hostname: front-end
+    build:
+      context: ./front-end
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    environment:
+      - API_URL=http://back-end:9000
+    depends_on:
+      - back-end
+    restart: unless-stopped
 

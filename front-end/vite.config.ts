@@ -14,11 +14,11 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://localhost:9000',
+        target: process.env.API_URL || 'http://localhost:9000',
         changeOrigin: true,
       },
       '/image': {
-        target: 'http://localhost:9000',
+        target: process.env.API_URL || 'http://localhost:9000',
         changeOrigin: true,
       },
     },
