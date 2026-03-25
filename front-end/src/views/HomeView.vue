@@ -14,9 +14,9 @@
   const ideaMessages = [
     '아이디어와 어울리는 브랜드명이 무엇인지 고민하고 있어요.',
     '입력하신 정보와 가장 어울리는 브랜드명을 조합하고 있어요.',
-    '브랜드명이 이미 출원/등록되어 있는지 확인하고 있어요.',
-    '이미 출원된 브랜드명이 있으면 다른 브랜드명을 추천할지 생각하고 있어요.',
+    '브랜드명과 유사한 상표가 있는지 확인하고 있어요.',
     '이제 거의 다 됐어요.',
+    '조금만 더 기다려주세요. 꼼꼼히 분석하는 중이에요.'
   ]
 
   const brandMessages = [
@@ -82,7 +82,7 @@
           : [...wizard.brandCategory]
         const category = allCategories.length ? allCategories : undefined
         const tone = wizard.brandTone.length ? wizard.brandTone : undefined
-        const res = await recommendBrand({ brand_idea: idea, brand_category: category, brand_tone: tone })
+        const res = await recommendBrand({ brand_idea: idea, brand_category: category, brand_tone: tone, count: 6 })
         wizard.brandCandidates = res.brand_candidates
         wizard.nextStep()
         router.push('/brand-name')
@@ -148,7 +148,6 @@
             placeholder="예: 친환경 반려동물 용품을 판매하는 감성 브랜드"
             maxlength="250"
             rows="3"
-            
           />
           <Transition name="slide">
             <div v-if="showOptions" class="options-panel">
@@ -158,7 +157,6 @@
                 v-model="wizard.brandCategory"
                 :options="categories"
                 :max="MAX_CATEGORY"
-                
               >
                 <button
                   class="chip"
@@ -176,7 +174,6 @@
                 class="option-input"
                 type="text"
                 placeholder="카테고리를 직접 입력하세요"
-                
               />
 
               <label class="option-label tone-label">브랜드 톤 <span class="option-hint">(최대 3개)</span></label>
@@ -184,20 +181,14 @@
                 v-model="wizard.brandTone"
                 :options="tones"
                 :max="MAX_TONE"
-                
               />
             </div>
           </Transition>
 
-          <div class="input-footer">
-            <button class="btn-options" @click="showOptions = !showOptions">
-              <span class="btn-options-arrow" :class="{ open: showOptions }">&#9662;</span>
-              조금 더 자세히 표현해 볼까요
-            </button>
-            <button class="btn-primary" :disabled="!wizard.canGoNext" @click="handleStart">
-              브랜드명 추천받기
-            </button>
-          </div>
+          <button class="btn-options" @click="showOptions = !showOptions">
+            <span class="btn-options-arrow" :class="{ open: showOptions }">&#8250;</span>
+            조금 더 자세히 표현해 볼까요
+          </button>
         </template>
 
         <!-- 브랜드명 모드 -->
@@ -209,7 +200,6 @@
             class="brand-input"
             type="text"
             placeholder="검토할 브랜드명을 입력하세요"
-            
             @keyup.enter="handleStart"
           />
           <Transition name="slide">
@@ -220,7 +210,6 @@
                 v-model="wizard.brandCategory"
                 :options="categories"
                 :max="MAX_CATEGORY"
-                
               >
                 <button
                   class="chip"
@@ -238,24 +227,22 @@
                 class="option-input"
                 type="text"
                 placeholder="카테고리를 직접 입력하세요"
-                
               />
             </div>
           </Transition>
 
-          <div class="input-footer">
-            <button class="btn-options" @click="showBrandOptions = !showBrandOptions">
-              <span class="btn-options-arrow" :class="{ open: showBrandOptions }">&#9662;</span>
-              조금 더 자세히 표현해 볼까요
-            </button>
-            <button class="btn-primary" :disabled="!wizard.canGoNext" @click="handleStart">
-              브랜드명 검토받기
-            </button>
-          </div>
+          <button class="btn-options" @click="showBrandOptions = !showBrandOptions">
+            <span class="btn-options-arrow" :class="{ open: showBrandOptions }">&#8250;</span>
+            조금 더 자세히 표현해 볼까요
+          </button>
         </template>
 
         <p v-if="error" class="error-msg">{{ error }}</p>
       </div>
+
+      <button class="btn-primary btn-submit" :disabled="!wizard.canGoNext" @click="handleStart">
+        {{ wizard.inputMode === 'idea' ? '브랜드명 추천받기' : '브랜드명 검토받기' }}
+      </button>
     </main>
 
   </div>
@@ -399,12 +386,13 @@
 
   .btn-options-arrow {
     display: inline-block;
-    font-size: 1rem;
+    font-size: 1.4rem;
+    transform: rotate(90deg);
     transition: transform 0.2s ease;
   }
 
   .btn-options-arrow.open {
-    transform: rotate(180deg);
+    transform: rotate(270deg);
   }
 
   .divider {
@@ -503,10 +491,11 @@
     max-height: 500px;
   }
 
-  .input-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  .btn-submit {
+    width: 100%;
+    margin-top: -0.75rem;
+    padding: 0.85rem 1.5rem;
+    font-size: 1rem;
   }
 
   .btn-primary:disabled {
