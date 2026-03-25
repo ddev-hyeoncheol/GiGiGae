@@ -139,7 +139,7 @@
 
         <NavButtons
           back-label="이전으로"
-          next-label="상표권 분석하기"
+          next-label="상표 분석하기"
           :next-disabled="!wizard.canGoNext"
           @next="handleNext"
           @back="handleBack"
