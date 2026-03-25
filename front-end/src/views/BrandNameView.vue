@@ -67,7 +67,7 @@
         brand_idea: wizard.idea.trim(),
         brand_category: category,
         brand_tone: tone,
-        count: 6,
+        count: 4,
         exclude,
       })
       wizard.selectedBrand = null

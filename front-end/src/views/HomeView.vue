@@ -82,7 +82,7 @@
           : [...wizard.brandCategory]
         const category = allCategories.length ? allCategories : undefined
         const tone = wizard.brandTone.length ? wizard.brandTone : undefined
-        const res = await recommendBrand({ brand_idea: idea, brand_category: category, brand_tone: tone, count: 6 })
+        const res = await recommendBrand({ brand_idea: idea, brand_category: category, brand_tone: tone, count: 4 })
         wizard.brandCandidates = res.brand_candidates
         wizard.nextStep()
         router.push('/brand-name')
