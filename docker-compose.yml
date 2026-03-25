@@ -14,6 +14,8 @@ services:
       - DATABASE_URL=postgresql+asyncpg://gigigae:${DB_PASSWORD}@db:5432/gigigae
     volumes:
       - ./back-end:/app
+      - ./image:/data/image:ro
+      - ./model:/data/model:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
@@ -23,7 +25,7 @@ services:
   db:
     container_name: db
     hostname: db
-    image: postgres:16-alpine
+    image: pgvector/pgvector:pg16
     environment:
       POSTGRES_DB: gigigae
       POSTGRES_USER: gigigae
@@ -33,7 +35,7 @@ services:
     volumes:
       - ./db/pgdata:/var/lib/postgresql/data
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
-      - ./db/image:/var/lib/postgresql/image
+      - ./image:/data/image:ro
     restart: unless-stopped
 
   # front-end:

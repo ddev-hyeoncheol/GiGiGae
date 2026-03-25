@@ -5,3 +5,5 @@ pydantic-settings
 ollama
 httpx
 asyncpg
+Pillow
+python-multipart
