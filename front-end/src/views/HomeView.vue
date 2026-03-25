@@ -5,12 +5,10 @@
   import { recommendBrand, searchTrademark } from '@/api'
   import ChipSelect from '@/components/ChipSelect.vue'
   import type { ChipOption } from '@/components/ChipSelect.vue'
-  import LoadingOverlay from '@/components/LoadingOverlay.vue'
 
   const wizard = useWizardStore()
   const router = useRouter()
 
-  const loading = ref(false)
   const error = ref('')
 
   const ideaMessages = [
@@ -70,8 +68,9 @@
   }
 
   async function handleStart() {
-    loading.value = true
     error.value = ''
+    const messages = wizard.inputMode === 'idea' ? ideaMessages : brandMessages
+    wizard.startLoading(messages)
 
     try {
       if (wizard.inputMode === 'idea') {
@@ -105,7 +104,7 @@
     } catch (e) {
       error.value = e instanceof Error ? e.message : '요청 처리 중 오류가 발생했습니다.'
     } finally {
-      loading.value = false
+      wizard.stopLoading()
     }
   }
 </script>
@@ -149,7 +148,7 @@
             placeholder="예: 친환경 반려동물 용품을 판매하는 감성 브랜드"
             maxlength="250"
             rows="3"
-            :disabled="loading"
+            
           />
           <Transition name="slide">
             <div v-if="showOptions" class="options-panel">
@@ -159,12 +158,12 @@
                 v-model="wizard.brandCategory"
                 :options="categories"
                 :max="MAX_CATEGORY"
-                :disabled="loading"
+                
               >
                 <button
                   class="chip"
                   :class="{ selected: customCategory, locked: isCustomLocked() }"
-                  :disabled="loading || isCustomLocked()"
+                  :disabled="isCustomLocked()"
                   @click="selectCustom"
                 >
                   <span class="chip-emoji">✏️</span>
@@ -177,7 +176,7 @@
                 class="option-input"
                 type="text"
                 placeholder="카테고리를 직접 입력하세요"
-                :disabled="loading"
+                
               />
 
               <label class="option-label tone-label">브랜드 톤 <span class="option-hint">(최대 3개)</span></label>
@@ -185,21 +184,18 @@
                 v-model="wizard.brandTone"
                 :options="tones"
                 :max="MAX_TONE"
-                :disabled="loading"
+                
               />
             </div>
           </Transition>
 
           <div class="input-footer">
             <button class="btn-options" @click="showOptions = !showOptions">
-              추가 옵션
               <span class="btn-options-arrow" :class="{ open: showOptions }">&#9662;</span>
+              조금 더 자세히 표현해 볼까요
             </button>
-            <button class="btn-primary" :disabled="!wizard.canGoNext || loading" @click="handleStart">
-              <template v-if="loading">
-                <span class="spinner" /> 분석 중...
-              </template>
-              <template v-else>브랜드명 추천</template>
+            <button class="btn-primary" :disabled="!wizard.canGoNext" @click="handleStart">
+              브랜드명 추천받기
             </button>
           </div>
         </template>
@@ -213,7 +209,7 @@
             class="brand-input"
             type="text"
             placeholder="검토할 브랜드명을 입력하세요"
-            :disabled="loading"
+            
             @keyup.enter="handleStart"
           />
           <Transition name="slide">
@@ -224,12 +220,12 @@
                 v-model="wizard.brandCategory"
                 :options="categories"
                 :max="MAX_CATEGORY"
-                :disabled="loading"
+                
               >
                 <button
                   class="chip"
                   :class="{ selected: customCategory, locked: isCustomLocked() }"
-                  :disabled="loading || isCustomLocked()"
+                  :disabled="isCustomLocked()"
                   @click="selectCustom"
                 >
                   <span class="chip-emoji">✏️</span>
@@ -242,21 +238,18 @@
                 class="option-input"
                 type="text"
                 placeholder="카테고리를 직접 입력하세요"
-                :disabled="loading"
+                
               />
             </div>
           </Transition>
 
           <div class="input-footer">
             <button class="btn-options" @click="showBrandOptions = !showBrandOptions">
-              추가 옵션
               <span class="btn-options-arrow" :class="{ open: showBrandOptions }">&#9662;</span>
+              조금 더 자세히 표현해 볼까요
             </button>
-            <button class="btn-primary" :disabled="!wizard.canGoNext || loading" @click="handleStart">
-              <template v-if="loading">
-                <span class="spinner" /> 검토 중...
-              </template>
-              <template v-else>브랜드명 검토</template>
+            <button class="btn-primary" :disabled="!wizard.canGoNext" @click="handleStart">
+              브랜드명 검토받기
             </button>
           </div>
         </template>
@@ -265,33 +258,24 @@
       </div>
     </main>
 
-    <LoadingOverlay
-      :visible="loading"
-      :messages="wizard.inputMode === 'idea' ? ideaMessages : brandMessages"
-      :interval="3000"
-    />
   </div>
 </template>
 
 <style scoped>
   .page {
-    height: 100%;
     display: flex;
     flex-direction: column;
     position: relative;
   }
 
   .content {
-    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    justify-content: center;
     padding: 2rem 1rem;
-    margin-top: -120px;
     gap: 2rem;
     max-width: 600px;
-    margin: -120px auto 0;
+    margin: auto;
     width: 100%;
   }
 

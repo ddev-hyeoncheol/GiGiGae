@@ -75,7 +75,6 @@
 
 <style scoped>
   .page {
-    height: 100%;
     display: flex;
     flex-direction: column;
   }

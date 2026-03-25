@@ -6,12 +6,10 @@
   import { recommendDomain, checkDomain } from '@/api'
   import PageHeader from '@/components/PageHeader.vue'
   import NavButtons from '@/components/NavButtons.vue'
-  import LoadingOverlay from '@/components/LoadingOverlay.vue'
 
   const wizard = useWizardStore()
   const router = useRouter()
 
-  const loading = ref(false)
   const error = ref('')
 
   const loadingMessages = [
@@ -28,7 +26,7 @@
   onMounted(async () => {
     if (wizard.domainCandidates.length > 0) return
 
-    loading.value = true
+    wizard.startLoading(loadingMessages)
     error.value = ''
 
     try {
@@ -65,7 +63,7 @@
     } catch (e) {
       error.value = e instanceof Error ? e.message : '도메인 추천 중 오류가 발생했습니다.'
     } finally {
-      loading.value = false
+      wizard.stopLoading()
     }
   })
 
@@ -98,7 +96,7 @@
       <div class="content-body">
         <p v-if="error" class="error-msg">{{ error }}</p>
 
-        <ul v-if="!loading && wizard.domainCandidates.length > 0" class="domain-list">
+        <ul v-if="wizard.domainCandidates.length > 0" class="domain-list">
           <li
             v-for="domain in wizard.domainCandidates"
             :key="domain.domain_name"
@@ -124,7 +122,6 @@
         </ul>
 
         <NavButtons
-          v-if="!loading"
           back-label="이전으로"
           next-label="배포 가이드 보기"
           :next-disabled="!wizard.canGoNext"
@@ -134,17 +131,11 @@
       </div>
     </main>
 
-    <LoadingOverlay
-      :visible="loading"
-      :messages="loadingMessages"
-      :interval="3000"
-    />
   </div>
 </template>
 
 <style scoped>
   .page {
-    height: 100%;
     display: flex;
     flex-direction: column;
     position: relative;
