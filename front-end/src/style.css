@@ -81,31 +81,31 @@ body::after,
 }
 
 body::before {
-  width: 600px;
-  height: 400px;
+  width: 800px;
+  height: 550px;
   background: rgba(79, 70, 229, 0.18);
-  animation: blob-drift-1 12s ease-in-out infinite;
+  animation: blob-drift-1 8s ease-in-out infinite;
 }
 
 body::after {
-  width: 500px;
-  height: 350px;
+  width: 700px;
+  height: 480px;
   background: rgba(14, 165, 233, 0.14);
-  animation: blob-drift-2 15s ease-in-out infinite;
+  animation: blob-drift-2 10s ease-in-out infinite;
 }
 
 #app::before {
-  width: 450px;
-  height: 300px;
+  width: 620px;
+  height: 420px;
   background: rgba(245, 158, 11, 0.10);
-  animation: blob-drift-3 13s ease-in-out infinite;
+  animation: blob-drift-3 9s ease-in-out infinite;
 }
 
 #app::after {
-  width: 350px;
-  height: 250px;
+  width: 500px;
+  height: 350px;
   background: rgba(16, 185, 129, 0.10);
-  animation: blob-drift-4 10s ease-in-out infinite;
+  animation: blob-drift-4 7s ease-in-out infinite;
 }
 
 @keyframes blob-drift-1 {
