@@ -52,10 +52,10 @@
 
   function riskDescription(risk: string) {
     switch (risk) {
-      case 'Low': return '현재 기준으로는 충돌 가능성이 낮아 보여요. 같은 분류 또는 유사한 이름이 확인되지 않아 출원에 유리합니다.'
+      case 'Low': return '현재 기준으로는 충돌 가능성이 낮아 보여요. 같은 분류 또는 유사한 이름이 확인되지 않아 출원에 유리해요.'
       case 'Middle': return '몇 가지는 괜찮지만, 비슷한 요소가 보여 한 번 더 확인하는 게 좋아요.'
       case 'High': return '동일하거나 매우 유사한 이름이 같은 분류에서 이미 등록 또는 출원돼 있어요. 그대로 사용하면 분쟁 가능성이 있어요.'
-      default: return '브랜드명이 입력되지 않아 텍스트 기반 분석은 수행되지 않았어요. 로고 이미지 기반의 시각적 유사도만 검토했습니다.'
+      default: return '브랜드명이 입력되지 않아 텍스트 기반 분석은 수행되지 않았어요. 로고 이미지 기반의 시각적 유사도만 검토했어요.'
     }
   }
 
@@ -88,14 +88,14 @@
 
   interface DisputeCase { category: string; title: string; parties: string; year: string; issue: string; result: string; lesson: string }
   const disputeCases: DisputeCase[] = [
-    { category: '보통명칭화', title: '초코파이 분쟁', parties: '오리온 vs 롯데 등', year: '1997', issue: '오리온이 최초 사용했으나 경쟁사 무대응으로 보통명칭화', result: '오리온 패소, 초코파이는 보통명칭 인정', lesson: '등록 후에도 적극적인 상표 관리가 필수입니다.' },
-    { category: '보통명칭화', title: '그립톡 분쟁', parties: '아이버스터 vs 60여 업체', year: '2023', issue: '스마트폰 거치대를 칭하는 보통명칭이 됨', result: '일부 지정상품 무효 심결', lesson: '브랜드명이 상품 자체를 지칭하게 되면 상표 등록이 무효화될 수 있습니다.' },
-    { category: '유사 상표', title: '스타벅스 vs 스타프릭스', parties: '스타벅스 vs 스타프릭스', year: '2019', issue: '발음 및 외관의 유사성으로 혼동 가능성 제기', result: '스타벅스 승소, 유사 상표 등록 무효', lesson: '유명 브랜드와 발음이나 외관이 유사하면 분쟁 대상이 됩니다.' },
-    { category: '유사 상표', title: '카카오 vs 유사 명칭', parties: '카카오 vs 유사 명칭 사업자', year: '2020', issue: '카카오 브랜드의 광범위한 식별력 인정 범위', result: '카카오 측 승소', lesson: '저명 상표와 유사한 이름은 업종이 달라도 분쟁 위험이 높습니다.' },
-    { category: '해외 선점', title: 'K패션 해외 상표 선점', parties: '한국 의류 브랜드 vs 해외 무단 등록자', year: '2023', issue: '한국 의류 브랜드명이 해외에서 무단 등록', result: '피해 5,751건 (2023년 기준)', lesson: '글로벌 진출 시 주요 시장에 상표를 먼저 등록해야 합니다.' },
-    { category: '디자인/로고', title: '로고 유사성 분쟁', parties: '다수 기업 간 로고 분쟁', year: '2021', issue: '도형 상표의 외관 유사성으로 인한 혼동 가능성', result: '유사 판정 시 후출원 무효', lesson: '로고 디자인도 기존 등록 상표와 시각적 유사도를 확인해야 합니다.' },
-    { category: '업종간 충돌', title: '동일 명칭 타업종 충돌', parties: '동명 브랜드 타업종 사업자', year: '2020', issue: '동일 브랜드명이 다른 업종에서 등록되어 혼동 발생', result: '저명 상표 우선 인정', lesson: '니스 분류가 다르더라도 저명 상표와의 충돌은 피해야 합니다.' },
-    { category: '대기업 vs 중소', title: '상표 브로커 분쟁', parties: '중소 사업자 vs 상표 브로커', year: '상시', issue: '사용 의사 없이 상표 대량 등록 후 합의금 요구', result: '불사용취소심판으로 대응 가능', lesson: '브랜드명 확정 후 빠르게 출원해야 선점 피해를 방지할 수 있습니다.' },
+    { category: '보통명칭화', title: '초코파이 분쟁', parties: '오리온 vs 롯데 등', year: '1997', issue: '오리온이 최초 사용했으나 경쟁사 무대응으로 보통명칭화', result: '오리온 패소, 초코파이는 보통명칭 인정', lesson: '등록 후에도 적극적인 상표 관리가 필수예요.' },
+    { category: '보통명칭화', title: '그립톡 분쟁', parties: '아이버스터 vs 60여 업체', year: '2023', issue: '스마트폰 거치대를 칭하는 보통명칭이 됨', result: '일부 지정상품 무효 심결', lesson: '브랜드명이 상품 자체를 지칭하게 되면 상표 등록이 무효화될 수 있어요.' },
+    { category: '유사 상표', title: '스타벅스 vs 스타프릭스', parties: '스타벅스 vs 스타프릭스', year: '2019', issue: '발음 및 외관의 유사성으로 혼동 가능성 제기', result: '스타벅스 승소, 유사 상표 등록 무효', lesson: '유명 브랜드와 발음이나 외관이 유사하면 분쟁 대상이 돼요.' },
+    { category: '유사 상표', title: '카카오 vs 유사 명칭', parties: '카카오 vs 유사 명칭 사업자', year: '2020', issue: '카카오 브랜드의 광범위한 식별력 인정 범위', result: '카카오 측 승소', lesson: '저명 상표와 유사한 이름은 업종이 달라도 분쟁 위험이 높아요.' },
+    { category: '해외 선점', title: 'K패션 해외 상표 선점', parties: '한국 의류 브랜드 vs 해외 무단 등록자', year: '2023', issue: '한국 의류 브랜드명이 해외에서 무단 등록', result: '피해 5,751건 (2023년 기준)', lesson: '글로벌 진출 시 주요 시장에 상표를 먼저 등록해야 해요.' },
+    { category: '디자인/로고', title: '로고 유사성 분쟁', parties: '다수 기업 간 로고 분쟁', year: '2021', issue: '도형 상표의 외관 유사성으로 인한 혼동 가능성', result: '유사 판정 시 후출원 무효', lesson: '로고 디자인도 기존 등록 상표와 시각적 유사도를 확인해야 해요.' },
+    { category: '업종간 충돌', title: '동일 명칭 타업종 충돌', parties: '동명 브랜드 타업종 사업자', year: '2020', issue: '동일 브랜드명이 다른 업종에서 등록되어 혼동 발생', result: '저명 상표 우선 인정', lesson: '니스 분류가 다르더라도 저명 상표와의 충돌은 피해야 해요.' },
+    { category: '대기업 vs 중소', title: '상표 브로커 분쟁', parties: '중소 사업자 vs 상표 브로커', year: '상시', issue: '사용 의사 없이 상표 대량 등록 후 합의금 요구', result: '불사용취소심판으로 대응 가능', lesson: '브랜드명 확정 후 빠르게 출원해야 선점 피해를 방지할 수 있어요.' },
   ]
 </script>
 
@@ -108,7 +108,7 @@
 
       <button class="btn-disputes" @click="showDisputes = true">
         <span class="btn-disputes-icon">!</span>
-        왜 상표권 등록이 중요한가요?
+        왜 상표 등록이 중요한가요?
       </button>
 
       <div class="content-body">
@@ -117,7 +117,7 @@
           <div class="risk-summary-title">{{ riskTitle(result.risk) }}</div>
           <p class="risk-summary-desc">{{ riskDescription(result.risk) }}</p>
           <p v-if="riskAdvice(result.risk)" class="risk-summary-advice text-muted">{{ riskAdvice(result.risk) }}</p>
-          <p class="risk-summary-disclaimer text-muted">본 분석은 특허청 공개 데이터 기반의 참고 자료예요. 최종 출원 여부는 변리사 검토를 권장해요.</p>
+          <p class="risk-summary-disclaimer text-muted"><span class="disclaimer-icon">i</span> 본 분석은 특허청 공개 데이터 기반의 참고 자료예요. 최종 출원 여부는 변리사 검토를 권장해요.</p>
         </div>
 
         <!-- B. 체크리스트 (6개 전체 노출) -->
@@ -156,10 +156,10 @@
           <div v-if="showDisputes" class="disputes-overlay" @click.self="showDisputes = false">
             <div class="disputes-modal">
               <div class="disputes-header">
-                <h2 class="disputes-modal-title">왜 상표권 등록이 중요한가요?</h2>
+                <h2 class="disputes-modal-title">왜 상표 등록이 중요한가요?</h2>
                 <button class="disputes-close" @click="showDisputes = false">&times;</button>
               </div>
-              <p class="disputes-subtitle text-muted">실제 분쟁 사례를 통해 상표권 등록의 중요성을 확인하세요.</p>
+              <p class="disputes-subtitle text-muted">실제 분쟁 사례를 통해 상표 등록의 중요성을 확인해 보세요.</p>
               <div class="disputes-list">
                 <div v-for="(d, i) in disputeCases" :key="i" class="dispute-card">
                   <div class="dispute-card-header">
@@ -209,7 +209,8 @@
 
   .risk-summary-desc { font-size: 0.85rem; line-height: 1.6; margin: 0; color: var(--color-text); }
   .risk-summary-advice { font-size: 0.8rem; margin: 0.5rem 0 0; }
-  .risk-summary-disclaimer { font-size: 0.75rem; margin: 0.75rem 0 0; padding-top: 0.5rem; border-top: 1px solid rgba(0,0,0,0.08); }
+  .risk-summary-disclaimer { font-size: 0.75rem; margin: 0.75rem 0 0; padding-top: 0.5rem; border-top: 1px solid rgba(0,0,0,0.08); display: flex; align-items: flex-start; gap: 0.4rem; }
+  .disclaimer-icon { display: inline-flex; align-items: center; justify-content: center; width: 0.85rem; height: 0.85rem; border-radius: 50%; background: var(--color-text-muted); color: var(--color-surface); font-size: 0.5rem; font-weight: 700; font-style: italic; flex-shrink: 0; margin-top: 0.05rem; }
 
   /* 공통 */
   .no-matches { padding: 2rem; text-align: center; border-radius: var(--radius); }

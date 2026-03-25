@@ -38,7 +38,6 @@ export const useWizardStore = defineStore('wizard', () => {
   const domainCandidates = ref<DomainCandidate[]>([])
   const selectedDomain = ref<DomainCandidate | null>(null)
   const logoPreview = ref<string | null>(null)
-  const finalReport = ref('')
 
   // 글로벌 로딩 상태
   const loading = ref(false)
@@ -111,7 +110,6 @@ export const useWizardStore = defineStore('wizard', () => {
     selectedLogo.value = null
     domainCandidates.value = []
     selectedDomain.value = null
-    finalReport.value = ''
   }
 
   return {
@@ -131,7 +129,6 @@ export const useWizardStore = defineStore('wizard', () => {
     selectedLogo,
     domainCandidates,
     selectedDomain,
-    finalReport,
     loading,
     loadingMessages,
     loadingInterval,

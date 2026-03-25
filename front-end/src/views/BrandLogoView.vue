@@ -41,7 +41,7 @@
   <div class="page">
     <main class="content">
       <PageHeader title="로고 후보">
-        <strong>{{ wizard.selectedBrand?.brand_name }}</strong> 에 대한 로고 후보입니다.
+        <strong>{{ wizard.selectedBrand?.brand_name }}</strong> 에 대한 로고 후보예요.
       </PageHeader>
 
       <div class="logo-grid">

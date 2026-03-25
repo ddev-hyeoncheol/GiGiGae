@@ -20,9 +20,9 @@
 
   const loadingMessages = [
     '브랜드에 어울리는 도메인을 추천하고 있어요.',
-    '추천된 도메인의 등록 가능 여부를 확인하고 있어요.',
+    '도메인 등록 가능 여부를 확인하고 있어요.',
     '가격 정보를 가져오고 있어요.',
-    '이제 거의 다 됐어요.',
+    '거의 다 됐어요. 조금만 기다려 주세요.',
   ]
 
   if (!wizard.selectedBrand) {
@@ -156,7 +156,7 @@
   <div class="page">
     <main class="content">
       <PageHeader title="도메인 추천">
-        <strong>{{ wizard.selectedBrand?.brand_name }}</strong> 에 사용할 도메인을 선택하세요.
+        <strong>{{ wizard.selectedBrand?.brand_name }}</strong> 에 사용할 도메인을 선택해 주세요.
       </PageHeader>
 
       <div class="content-body">

@@ -164,9 +164,6 @@ export function useTrademarkChecklist(
   ])
 
   const totalChecked = computed(() => items.value.length)
-  const warningCount = computed(() => items.value.filter(i => i.status === 'warning').length)
-  const cautionCount = computed(() => items.value.filter(i => i.status === 'caution').length)
-  const safeCount = computed(() => items.value.filter(i => i.status === 'safe').length)
 
-  return { items, totalChecked, warningCount, cautionCount, safeCount }
+  return { items, totalChecked }
 }

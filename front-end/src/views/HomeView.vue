@@ -12,18 +12,17 @@
   const error = ref('')
 
   const ideaMessages = [
-    '아이디어와 어울리는 브랜드명이 무엇인지 고민하고 있어요.',
-    '입력하신 정보와 가장 어울리는 브랜드명을 조합하고 있어요.',
-    '브랜드명과 유사한 상표가 있는지 확인하고 있어요.',
-    '이제 거의 다 됐어요.',
-    '조금만 더 기다려주세요. 꼼꼼히 분석하는 중이에요.'
+    '입력하신 아이디어를 분석하고 있어요.',
+    '브랜드명 후보를 조합하고 있어요.',
+    '유사한 상표가 있는지 확인하고 있어요.',
+    '거의 다 됐어요. 조금만 기다려 주세요.',
   ]
 
   const brandMessages = [
-    '브랜드명이 이미 출원/등록되어 있는지 확인하고 있어요.',
+    '동일한 상표가 등록 또는 출원되어 있는지 확인하고 있어요.',
     '유사한 상표가 있는지 검색하고 있어요.',
-    '위험도를 분석하고 있어요.',
-    '이제 거의 다 됐어요.',
+    '충돌 위험도를 분석하고 있어요.',
+    '거의 다 됐어요. 조금만 기다려 주세요.',
   ]
   const showOptions = ref(false)
   const showBrandOptions = ref(false)
@@ -255,7 +254,7 @@
             v-model="wizard.directBrandName"
             class="brand-input"
             type="text"
-            placeholder="검토할 브랜드명을 입력하세요"
+            placeholder="분석할 브랜드명을 입력하세요"
             @keyup.enter="handleStart"
           />
 
@@ -320,7 +319,7 @@
       </div>
 
       <button class="btn-primary btn-submit" :disabled="!wizard.canGoNext" @click="handleStart">
-        {{ wizard.inputMode === 'idea' ? '브랜드명 추천받기' : '브랜드명 검토받기' }}
+        {{ wizard.inputMode === 'idea' ? '브랜드명 추천받기' : '브랜드명 분석하기' }}
       </button>
     </main>
 

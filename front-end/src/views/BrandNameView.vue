@@ -20,10 +20,10 @@
   }
 
   const rerollMessages = [
-    '새로운 브랜드명을 구상하고 있어요.',
-    '이전 후보를 제외하고 다시 조합 중이에요.',
+    '새로운 브랜드명을 만들고 있어요.',
+    '이전 후보를 제외하고 다시 조합하고 있어요.',
     '상표 충돌 위험도를 검토하고 있어요.',
-    '거의 다 됐어요! 조금만 기다려 주세요.',
+    '거의 다 됐어요. 조금만 기다려 주세요.',
   ]
 
   function selectBrand(candidate: BrandCandidate) {
@@ -36,9 +36,9 @@
 
   function riskLabel(risk: string) {
     switch (risk) {
-      case 'Low': return 'Low'
-      case 'Middle': return 'Middle'
-      case 'High': return 'High'
+      case 'Low': return '상표 안심'
+      case 'Middle': return '상표 주의'
+      case 'High': return '상표 위험'
       default: return 'unchecked'
     }
   }
@@ -98,7 +98,7 @@
   <div class="page">
     <main class="content">
       <PageHeader title="이런 브랜드명은 어때요?">
-        입력하신 아이디어, 카테고리, 톤을 모두 반영하고<br/>상표 충돌 위험까지 미리 분석한 브랜드명 후보들이에요.
+        입력하신 아이디어, 카테고리, 톤을 모두 반영하고<br/>상표 충돌 위험도까지 미리 검토한 후보들이에요.
       </PageHeader>
 
       <div class="content-body">
