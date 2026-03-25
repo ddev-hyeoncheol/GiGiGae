@@ -13,6 +13,52 @@
 
   const result = wizard.trademarkResult ?? wizard.selectedBrand?.trademark
 
+  /* 니스 분류 → 7개 카테고리 매핑 */
+  const niceCategoryMap: Record<string, string> = {
+    '35': '이커머스 · 온라인스토어',
+    '42': '이커머스 · 온라인스토어',
+    '29': 'F&B · 카페 · 숙박',
+    '30': 'F&B · 카페 · 숙박',
+    '32': 'F&B · 카페 · 숙박',
+    '43': 'F&B · 카페 · 숙박',
+    '9': 'IT · SaaS · 테크',
+    '18': '패션 · 의류 브랜드',
+    '25': '패션 · 의류 브랜드',
+    '26': '패션 · 의류 브랜드',
+    '3': '뷰티 · 코스메틱',
+    '44': '뷰티 · 코스메틱',
+    '11': '디지털 · 전자제품',
+    '28': '디지털 · 전자제품',
+    '31': '카페 · 베이커리 · 식품',
+  }
+
+  const categoryEmoji: Record<string, string> = {
+    '이커머스 · 온라인스토어': '🛒',
+    'F&B · 카페 · 숙박': '🍽️',
+    'IT · SaaS · 테크': '💻',
+    '패션 · 의류 브랜드': '👕',
+    '뷰티 · 코스메틱': '💄',
+    '디지털 · 전자제품': '📱',
+    '카페 · 베이커리 · 식품': '🧁',
+    '기타': '📦',
+  }
+
+  function resolveCategories(niceClass: string | null | undefined): { emoji: string; label: string }[] {
+    if (!niceClass) return [{ emoji: '📦', label: '기타' }]
+    const classes = niceClass.split('|').map(c => c.trim())
+    const seen = new Set<string>()
+    const result: { emoji: string; label: string }[] = []
+    for (const cls of classes) {
+      const cat = niceCategoryMap[cls]
+      if (cat && !seen.has(cat)) {
+        seen.add(cat)
+        result.push({ emoji: categoryEmoji[cat], label: cat })
+      }
+    }
+    if (result.length === 0) result.push({ emoji: '📦', label: '기타' })
+    return result
+  }
+
   function riskClass(risk: string) {
     switch (risk) {
       case 'Low': return 'risk-low'
@@ -76,8 +122,14 @@
                   <span class="match-name">{{ match.name }}</span>
                   <span class="match-similarity">{{ similarityPercent(match.similarity) }}%</span>
                 </div>
+                <div class="match-categories">
+                  <span
+                    v-for="cat in resolveCategories(match.nice_class)"
+                    :key="cat.label"
+                    class="category-tag"
+                  >{{ cat.label }}</span>
+                </div>
                 <div class="match-meta text-muted">
-                  <span v-if="match.nice_class">{{ match.nice_class }}</span>
                   <span v-if="match.legal_status">{{ match.legal_status }}</span>
                   <span>{{ match.application_no }}</span>
                 </div>
@@ -194,6 +246,21 @@
     border-bottom: 1px solid var(--color-border);
   }
 
+  .match-categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+
+  .category-tag {
+    font-size: 0.7rem;
+    padding: 0.1rem 0.45rem;
+    border-radius: 999px;
+    background-color: var(--color-surface-alt, var(--color-border));
+    color: var(--color-text-muted);
+    white-space: nowrap;
+  }
+
   .matches-list {
     display: flex;
     flex-direction: column;
@@ -203,7 +270,7 @@
   .match-item {
     display: flex;
     flex-direction: column;
-    gap: 0.2rem;
+    gap: 0.35rem;
     padding: 0.5rem 0;
     border-bottom: 1px solid var(--color-border);
   }
