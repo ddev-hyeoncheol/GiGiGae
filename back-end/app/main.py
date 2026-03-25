@@ -5,6 +5,7 @@ from typing import Any
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.api.router import api_router
 from app.core.config import settings
@@ -58,6 +59,9 @@ app.add_middleware(
 app.add_exception_handler(AppException, app_exception_handler)
 
 app.include_router(api_router, prefix=API_V1_PREFIX)
+
+# 상표 이미지 정적 파일 서빙
+app.mount("/image", StaticFiles(directory="/data/image"), name="trademark-images")
 
 
 @app.get("/health")
