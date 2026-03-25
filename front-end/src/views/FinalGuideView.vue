@@ -181,6 +181,48 @@
           <p class="report-disclaimer text-muted"><span class="disclaimer-icon">i</span> 본 분석은 특허청 공개 데이터 기반의 참고 자료예요. 최종 출원 여부는 변리사 검토를 권장해요.</p>
         </div>
 
+        <!-- NHN Cloud 가이드 -->
+        <div class="section-card surface">
+          <div class="section-card-header">
+            <h4 class="section-card-title">이제 브랜드를 실제로 시작해볼까요</h4>
+            <p class="section-card-sub text-muted">NHN Cloud를 이용하면 홈페이지 배포, 메일 설정, 보안까지 한 곳에서 해결할 수 있어요.</p>
+          </div>
+          <div class="nhn-steps">
+            <div class="nhn-step">
+              <div class="nhn-step-number">01</div>
+              <div class="nhn-step-content">
+                <h5 class="nhn-step-title">도메인 연결 준비</h5>
+                <p class="nhn-step-desc text-muted">등록한 도메인을 NHN Cloud DNS 서비스에 등록하고, 서버 IP 또는 로드밸런서에 연결해요.</p>
+                <span class="nhn-step-path text-muted">→ NHN Cloud > DNS Plus > 레코드 추가</span>
+              </div>
+            </div>
+            <div class="nhn-step">
+              <div class="nhn-step-number">02</div>
+              <div class="nhn-step-content">
+                <h5 class="nhn-step-title">홈페이지 또는 스토어 배포</h5>
+                <p class="nhn-step-desc text-muted">Object Storage 정적 웹사이트 기능으로 랜딩 페이지를, Compute 인스턴스로 웹 서버를 띄울 수 있어요.</p>
+                <span class="nhn-step-path text-muted">→ Object Storage > 컨테이너 > 정적 웹사이트 설정</span>
+              </div>
+            </div>
+            <div class="nhn-step">
+              <div class="nhn-step-number">03</div>
+              <div class="nhn-step-content">
+                <h5 class="nhn-step-title">메일 · 운영 도구 설정</h5>
+                <p class="nhn-step-desc text-muted">NHN Cloud Email 서비스에 메일 도메인을 등록하고, 브랜드 도메인 기반 이메일 발송 환경을 만들어요.</p>
+                <span class="nhn-step-path text-muted">→ Notification > Email > 메일 도메인 관리</span>
+              </div>
+            </div>
+            <div class="nhn-step">
+              <div class="nhn-step-number">04</div>
+              <div class="nhn-step-content">
+                <h5 class="nhn-step-title">오픈 전 체크</h5>
+                <p class="nhn-step-desc text-muted">SSL 인증서(HTTPS)를 적용하고, 실제 사용자 기기에서 주소 접속과 속도를 확인해 보세요.</p>
+                <span class="nhn-step-path text-muted">→ Certificate Manager > 인증서 발급</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <NavButtons
           back-label="이전으로"
           next-label="처음으로"
@@ -283,6 +325,31 @@
   .icon-disabled { color: var(--color-border); }
   .review-badge-label { font-weight: 600; flex: 1; color: var(--color-text); }
   .review-badge-status { font-size: 0.7rem; font-weight: 600; color: var(--color-text-muted); white-space: nowrap; }
+
+  /* NHN Cloud 가이드 */
+  .nhn-steps { display: flex; flex-direction: column; gap: 0; position: relative; }
+  .nhn-step {
+    display: flex; gap: 1rem; padding: 1rem 0;
+    border-bottom: 1px solid var(--color-border);
+    position: relative;
+  }
+  .nhn-step:last-child { border-bottom: none; padding-bottom: 0; }
+  .nhn-step:first-child { padding-top: 0; }
+  .nhn-step-number {
+    width: 2rem; height: 2rem; border-radius: 50%;
+    background: var(--color-bg); border: 2px solid var(--color-border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; font-weight: 700; color: var(--color-text-muted);
+    flex-shrink: 0; margin-top: 0.1rem;
+  }
+  .nhn-step-content { flex: 1; display: flex; flex-direction: column; gap: 0.3rem; }
+  .nhn-step-title { font-size: 0.95rem; font-weight: 700; margin: 0; color: var(--color-text); }
+  .nhn-step-desc { font-size: 0.8rem; margin: 0; line-height: 1.5; }
+  .nhn-step-path {
+    font-size: 0.75rem; padding: 0.3rem 0.6rem;
+    background: var(--color-bg); border-radius: 4px;
+    display: inline-block; width: fit-content;
+  }
 
   @media (max-width: 520px) {
     .summary-row { grid-template-columns: 1fr; }

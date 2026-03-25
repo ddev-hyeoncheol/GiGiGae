@@ -192,7 +192,7 @@
                 </template>
                 <template v-else>
                   <span v-if="altLoading[domain.domain_name]" class="alt-spinner"></span>
-                  <span v-else class="badge-alt">등록 불가</span>
+                  <span v-else class="badge-alt">다른 옵션 보기</span>
                 </template>
               </div>
             </div>

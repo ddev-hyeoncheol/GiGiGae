@@ -225,9 +225,9 @@
   .image-card-cats { display: flex; flex-wrap: wrap; gap: 0.3rem; }
 
   /* 분쟁 사례 버튼 */
-  .btn-disputes { width: 100%; max-width: 720px; display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1rem; border: none; border-radius: var(--radius); background: color-mix(in srgb, var(--color-danger) 10%, transparent); color: var(--color-danger); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
-  .btn-disputes:hover { background: color-mix(in srgb, var(--color-danger) 18%, transparent); }
-  .btn-disputes-icon { display: flex; align-items: center; justify-content: center; width: 1.3rem; height: 1.3rem; border-radius: 50%; background: var(--color-danger); color: #fff; font-size: 0.75rem; font-weight: 800; flex-shrink: 0; }
+  .btn-disputes { width: 100%; max-width: 720px; display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1rem; border: none; border-radius: var(--radius); background: color-mix(in srgb, var(--color-primary) 10%, transparent); color: var(--color-primary); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+  .btn-disputes:hover { background: color-mix(in srgb, var(--color-primary) 18%, transparent); }
+  .btn-disputes-icon { display: flex; align-items: center; justify-content: center; width: 1.3rem; height: 1.3rem; border-radius: 50%; background: var(--color-primary); color: #fff; font-size: 0.75rem; font-weight: 800; flex-shrink: 0; }
 
   /* 오버레이 */
   .disputes-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; padding: 1rem; }

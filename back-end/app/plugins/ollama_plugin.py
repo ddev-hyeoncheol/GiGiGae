@@ -37,11 +37,11 @@ class OllamaPlugin:
                 format=schema.model_json_schema(),
                 think=False,
                 options={
-                    "temperature": 0.95,
-                    "num_predict": 2048,
-                    "num_ctx": 4096,
-                    "top_k": 70,
-                    "top_p": 0.92,
+                    "temperature": 0.75,
+                    "num_predict": 1024,
+                    "num_ctx": 2048,
+                    "top_k": 50,
+                    "top_p": 0.9,
                 },
             )
             return schema.model_validate_json(response["message"]["content"])

@@ -84,20 +84,22 @@ class RecommendService:
 
         nice_classes = resolve_nice_classes(request.brand_category or None)
 
-        brand_candidates = []
-        for candidate in llm_result.brand_candidates:
+        async def _search_one(candidate):
             trademark_result = await self._trademark.search(
                 brand_name=candidate.brand_name,
                 nice_classes=nice_classes,
             )
-            brand_candidates.append(
-                BrandRecommendResult(
-                    brand_name=candidate.brand_name,
-                    brand_description=candidate.brand_description,
-                    brand_tags=candidate.brand_tags,
-                    trademark=trademark_result,
-                )
+            return BrandRecommendResult(
+                brand_name=candidate.brand_name,
+                brand_description=candidate.brand_description,
+                brand_tags=candidate.brand_tags,
+                trademark=trademark_result,
             )
+
+        import asyncio
+        brand_candidates = list(await asyncio.gather(
+            *[_search_one(c) for c in llm_result.brand_candidates]
+        ))
 
         return BrandRecommendResponse(brand_candidates=brand_candidates)
 

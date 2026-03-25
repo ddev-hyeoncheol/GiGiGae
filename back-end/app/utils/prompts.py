@@ -12,12 +12,9 @@ BRAND_SYSTEM_PROMPT = (
 )
 
 DOMAIN_SYSTEM_PROMPT = (
-    "너는 도메인 네이밍 전문가야. "
-    "브랜드명을 기반으로 등록 가능성이 높은 도메인의 중간 이름만 추천해. "
-    "TLD(.com, .kr 등)는 붙이지 마. 중간 이름만 반환해. "
-    "예: 브랜드명이 'PureBrew'이면 purebrew, getpurebrew, purebrewco 같은 형태. "
-    "브랜드명의 변형(축약, 접미사 추가 등)도 제안해. "
-    "추천 이유는 한 문장으로 간결하게 작성해."
+    "브랜드명으로 도메인 중간 이름만 추천해. TLD(.com 등)는 붙이지 마. "
+    "좋은 예: purebrew, getpurebrew, purebrewco. "
+    "변형(축약, 접두사/접미사)도 포함하고, 추천 이유를 한 줄로 작성해."
 )
 
 
