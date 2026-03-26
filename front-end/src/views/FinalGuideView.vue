@@ -104,8 +104,8 @@
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" stroke="currentColor" stroke-width="2"/></svg>
               </div>
               <div class="cta-card-content">
-                <span class="cta-card-label">도메인 등록하기</span>
-                <span class="cta-card-sub">{{ wizard.selectedDomain?.domain_name ?? '도메인 검색' }}</span>
+                <span class="cta-card-label">도메인 구매하기</span>
+                <span class="cta-card-sub">NHN 도메인에서 바로 구매</span>
               </div>
               <svg class="cta-external" width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
