@@ -16,11 +16,12 @@
 ### 플로우 A: 아이디어로 시작하기
 
 1. **Landing / Input** : 사용자 아이디어 입력 (250자 이내) + 카테고리/톤 선택 (선택사항).
-2. **Brand Name View** : Ollama 를 통한 브랜드명 후보 추천 (기본 6개, 최대 10개) + 상표권 위험도(Low / Middle / High) 분석 결과 반환. 재추천 최대 2회 지원.
-3. **Brand Trademark View** : 선택한 브랜드명에 대한 상표권 상세 분석. 텍스트 유사도(pg_trgm) + 니스 분류 필터 기반 유사 상표 검색. 분쟁 사례 오버레이 제공.
-4. **Brand Logo View** : 추천 브랜드명 기반 로고 후보 4~5개 생성 (우선 Mock 데이터/이미지로 처리).
-5. **Brand Domain View** : 도메인 후보 추천 및 NHN Cloud API 기반 가용성 / 가격 조회.
-6. **Final Guide View** : 선택된 정보들을 취합해 NHN Cloud 기반 배포 가이드 리포트(Markdown / HTML) 생성.
+2. **Brand Name View** : Ollama 를 통한 브랜드명 후보 추천 (기본 4개, 최대 10개) + 상표권 위험도(Low / Middle / High) 분석 결과 반환. 재추천 최대 2회 지원.
+3. **Brand Trademark View** : 선택한 브랜드명에 대한 상표 분석. 텍스트 유사도(pg_trgm) + 니스 분류 필터 기반 유사 상표 검색. 분쟁 사례 오버레이 제공.
+4. **Brand Domain View** : 도메인 후보 추천 및 NHN Cloud API 기반 가용성 / 가격 조회.
+5. **Final Guide View** : 선택된 정보들을 취합해 NHN Cloud 기반 서비스 론칭 가이드 제공 (DNS Plus, Object Storage, Email, Certificate Manager 4단계).
+
+> **Brand Logo View** 는 현재 Mock 상태로 구현되어 있으며, 위자드 플로우에서는 제외되어 있습니다.
 
 ### 플로우 B: 브랜드명 바로 검토하기
 
@@ -48,10 +49,10 @@
 ### 1. Back-end (FastAPI, Python 3.12+) :
 
 - **Data Validation** : 모든 입출력은 Pydantic Structured JSON 규격을 엄격히 준수한다.
-- **LLM** : Ollama(gemma3:12b or qwen3:8b)를 `plugins/ollama_plugin.py`로 관리한다.
+- **LLM** : Ollama(gemma3:4b)를 `plugins/ollama_plugin.py`로 관리한다. `num_predict=1024`, `num_ctx=2048` 로 최적화되어 있다.
 - **이미지 임베딩** : OpenAI CLIP(ViT-B/32)을 `plugins/clip_plugin.py`로 관리한다. 싱글톤 패턴으로 모델 1회 로딩. 볼륨 마운트(`/data/model`)에서 모델을 우선 로드한다.
 - **도메인 조회** : NHN Cloud Domain API를 `plugins/nhn_domain_plugin.py`로 관리한다.
-- **상표 검색** : PostgreSQL + pg_trgm 기반 텍스트 유사도 검색 + pgvector 기반 이미지 유사도 검색을 `services/trademark_service.py`로 관리한다. 니스 분류 필터 적용 시 결과가 없으면 전체 검색으로 폴백한다.
+- **상표 검색** : PostgreSQL + pg_trgm 기반 텍스트 유사도 검색 + pgvector 기반 이미지 유사도 검색을 `services/trademark_service.py`로 관리한다. 니스 분류 필터 적용 시 결과가 없으면 전체 검색으로 폴백한다. 브랜드 추천 시 각 후보별 상표 검색은 `asyncio.gather`로 병렬 실행된다.
 - **비즈니스 로직** : LLM 추천 + 상표 검색을 조합하는 `services/recommend_service.py`에서 처리한다. 카테고리 → 니스 분류 매핑을 통해 업종별 상표 검색을 수행한다.
 - **DB 커넥션** : `core/database.py`에서 asyncpg 커넥션 풀을 관리하고, 서비스에 DI로 주입한다.
 - **정적 파일** : `/image` 경로로 상표 이미지를 서빙한다 (`StaticFiles`).
@@ -71,6 +72,8 @@
 - **로딩 UI** : App.vue 레벨의 글로벌 LoadingOverlay. 단계별 메시지 로테이션.
 - **API 클라이언트** : JSON + FormData(multipart) 자동 분기 처리.
 - **Vite Proxy** : `/api` → 백엔드, `/image` → 백엔드 정적 파일.
+- **Vite HMR** : Docker 환경에서 파일 변경 감지를 위해 `server.watch.usePolling: true` (interval: 500ms) 사용.
+- **프론트엔드 컨테이너** : Docker 컨테이너로 실행되며, `host: 0.0.0.0`, port: 5173 으로 바인딩된다.
 
 ### 4. API Endpoints :
 
@@ -85,12 +88,14 @@
 
 ### 5. 상표권 위험도 판별 기준 :
 
-| 등급 | 유사도 범위 | 설명 |
-|------|-----------|------|
-| Low | < 0.4 | 유사 상표 거의 없음, 출원 유리 |
-| Middle | 0.4 ~ 0.55 | 일부 유사 상표 존재, 검토 필요 |
-| High | >= 0.55 | 유사 상표 많음, 출원 시 주의 |
-| unchecked | - | DB 미연결 시 |
+백엔드 내부값(Low / Middle / High)을 프론트엔드에서 사용자 친화적인 한국어 레이블로 표시한다.
+
+| 백엔드 값 | 프론트엔드 표시 | 유사도 범위 | 설명 |
+|----------|--------------|-----------|------|
+| Low | 상표 안심 | < 0.4 | 유사 상표 거의 없음, 출원 유리 |
+| Middle | 상표 주의 | 0.4 ~ 0.55 | 일부 유사 상표 존재, 검토 필요 |
+| High | 상표 위험 | >= 0.55 | 유사 상표 많음, 출원 시 주의 |
+| unchecked | 미확인 | - | DB 미연결 시 |
 
 ## Commit Message
 

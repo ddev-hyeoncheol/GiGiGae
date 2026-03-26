@@ -30,13 +30,15 @@
    - Output: `{"status": "ok"}`
 
 > `exclude` 필드: 재추천 시 프론트엔드가 이전 결과를 전달하면 LLM 프롬프트에서 제외
-> `count` 필드: 추천 개수 지정 (기본 6개, 최대 10개)
+> `count` 필드: 추천 개수 지정 (기본 4개, 최대 10개)
 > `TrademarkMatch` 및 `ImageSearchMatch`에 `image_path` 필드 포함
 
 ## Task 3: Implementation Strategy
+- **LLM 모델**: `gemma3:4b` 사용. `num_predict=1024`, `num_ctx=2048` 로 속도 최적화.
 - **Plugin Architecture**: `OllamaPlugin`(LLM), `ClipPlugin`(이미지 임베딩), `NhnDomainPlugin`(도메인 API) 플러그인 분리.
 - **CLIP 이미지 임베딩**: 싱글톤 패턴으로 ViT-B/32 모델 1회 로딩. 볼륨 마운트(`/data/model/ViT-B-32.pt`)에서 우선 로드, 없으면 자동 다운로드.
 - **카테고리 → 니스 분류 매핑**: `recommend_service.py`에서 카테고리를 니스 분류 코드로 변환하여 상표 검색 시 필터링. 결과 0건 시 전체 검색 폴백.
+- **병렬 상표 검색**: 브랜드 추천 후 각 후보별 상표 검색은 `asyncio.gather`로 병렬 실행하여 응답 속도를 최소화한다.
 - **텍스트 검색 image_path**: `SEARCH_SQL`, `SEARCH_WITH_CLASS_SQL` 모두 `image_path` 컬럼 SELECT.
 - **BRAND_SYSTEM_PROMPT**: 브랜드 네이밍 전문가 역할, 보통명사 사용 최소화, 슬로건 명사형, 태그 2~3개, 영문/한글 구분 지시.
 - **Error Handling**: 전역 예외 처리기를 통해 `AppException` 계층의 규격화된 에러 JSON 반환 (`error_code`, `message`, `detail`).
